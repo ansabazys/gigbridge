@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* For Chrome, Edge, and Safari */
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px white inset !important; /* Change white to match your background color */
+  -webkit-text-fill-color: #000 !important; /* Ensure the text color remains readable */
+  border: none !important; /* Match your normal input border */
+}
+
+/* For Firefox */
+input:-moz-autofill {
+  box-shadow: 0 0 0px 1000px white inset !important;
+  border: none !important; /* Match your normal input border */
+}
+
+/* src/styles/fonts.css */
+@font-face {
+  font-family: "Geist";
+  src: url("./assets/fonts/GeistVF.woff2") format("woff2");
+
+}
+
+body {
+    font-family: Geist, 'sans-serif';
+}
