@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* For Chrome, Edge, and Safari */
 input:-webkit-autofill {
   box-shadow: 0 0 0px 1000px white inset !important; /* Change white to match your background color */
@@ -19,9 +20,18 @@ input:-moz-autofill {
 @font-face {
   font-family: "Geist";
   src: url("./assets/fonts/GeistVF.woff2") format("woff2");
-
 }
 
 body {
-    font-family: Geist, 'sans-serif';
+  font-family: Geist, "sans-serif";
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
 }

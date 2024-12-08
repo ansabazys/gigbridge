@@ -9,7 +9,7 @@ const Hero = () => {
   return (
     <section className="flex flex-col justify-center items-center text-center">
       <div className="container px-4 flex gap-6 flex-col items-center text-center py-16 justify-center">
-        <h1 className="lg:text-6xl text-5xl  font-bold tracking-tighter">
+        <h1 className="lg:text-6xl text-5xl  md:font-bold font-medium tracking-tighter">
           Find Work, <br />
           Post Jobs, Get Things Done!
         </h1>

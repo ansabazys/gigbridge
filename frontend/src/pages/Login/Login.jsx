@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiLock, FiEyeOff, FiUser, FiEye } from "react-icons/fi";
 import { BiLogoApple, BiLogoGoogle, BiLogoFacebook } from "react-icons/bi";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
