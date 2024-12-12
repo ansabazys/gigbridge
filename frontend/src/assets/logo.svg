@@ -1,0 +1,11 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080">
+	<title>New Project</title>
+	<style>
+		tspan { white-space:pre } 
+		.t0 { font-size: 1000px;fill: #000000;font-weight: 400;font-family: "GalleryRegular", "Gallery" } 
+	</style>
+	<text id="gb" style="transform: matrix(1,0,0,1,540,797.84)" >
+		<tspan x="-501" y="0" class="t0" dx="0" >g</tspan><tspan  y="0" class="t0" dx="0" >b</tspan><tspan  y="0" class="t0" dx="0" >
+</tspan>
+	</text>
+</svg>

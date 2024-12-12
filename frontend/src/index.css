@@ -16,15 +16,7 @@ input:-moz-autofill {
   border: none !important; /* Match your normal input border */
 }
 
-/* src/styles/fonts.css */
-@font-face {
-  font-family: "Geist";
-  src: url("./assets/fonts/GeistVF.woff2") format("woff2");
-}
 
-body {
-  font-family: Geist, "sans-serif";
-}
 
 /* Hide scrollbar but allow scrolling */
 .scrollbar-hide {

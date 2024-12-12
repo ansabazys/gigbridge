@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IoCheckmarkOutline,
   IoChevronDownSharp,
@@ -54,6 +54,24 @@ const SearchBar = () => {
     });
   };
 
+  const handleClickOutside = () => {
+    setCategoryDrop(false)
+    setJobTypeDrop(false)
+    setLocationDrop(false)
+  }
+
+  useEffect(() => {
+    window.addEventListener('click', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside)
+    }
+  },[])
+
+  const handleComponentClick = (e) => {
+    e.stopPropagation()
+  }
+
   console.log(selectedCategory);
   return (
     <div className="h-20 border-b flex items-center justify-between px-5 w-full">
@@ -66,10 +84,14 @@ const SearchBar = () => {
           <input type="text" placeholder="Search" className="  outline-none" />
         </div>
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:block" onClick={handleComponentClick}>
           <div
             className="border-dashed border-2 py-[.25rem] px-2 w-max flex justify-center items-center gap-1 rounded-lg "
-            onClick={() => setCategoryDrop((prev) => !prev)}
+            onClick={() => {
+              setCategoryDrop((prev) => !prev),
+                jobTypeDrop && setJobTypeDrop((prev) => !prev),
+                locationDrop && setLocationDrop((prev) => !prev)
+            }}
           >
             <PiPlusCircleBold size={20} />
             <button className="flex divide-x">
@@ -107,12 +129,16 @@ const SearchBar = () => {
           )}
         </div>
 
-        {/* Loaction */}
+        {/* Location */}
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:block" onClick={handleComponentClick}>
           <div
             className="border-dashed border-2 py-[.25rem] px-2 w-max flex justify-center items-center gap-1 rounded-lg "
-            onClick={() => setLocationDrop((prev) => !prev)}
+            onClick={() => {
+              setLocationDrop((prev) => !prev),
+                jobTypeDrop && setJobTypeDrop((prev) => !prev),
+                categoryDrop && setCategoryDrop((prev) => !prev);
+            }}
           >
             <IoLocationOutline size={20} />
             <button>{selectedLocation ? selectedLocation : "Location"}</button>
@@ -134,12 +160,14 @@ const SearchBar = () => {
                 {Locations.map((location) => (
                   <button
                     className={` rounded-lg py-[.25rem] flex text-start w-full px-2 gap-2 hover:bg-slate-100 items-center`}
-                    onClick={() =>
+                    onClick={() => {
                       setSelectedLocation(
                         location,
                         setLocationDrop((prev) => !prev)
-                      )
-                    }
+                      ),
+                        jobTypeDrop && setJobTypeDrop((prev) => !prev),
+                        categoryDrop && setCategoryDrop((prev) => !prev);
+                    }}
                   >
                     {location}
                   </button>
@@ -151,10 +179,14 @@ const SearchBar = () => {
 
         {/* Job Type */}
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:block" onClick={handleComponentClick}>
           <div
             className="border py-[.3rem] px-[.6875rem] w-max flex justify-center items-center gap-3  rounded-lg "
-            onClick={() => setJobTypeDrop((prev) => !prev)}
+            onClick={() => {
+              setJobTypeDrop((prev) => !prev),
+                categoryDrop && setCategoryDrop((prev) => !prev),
+                locationDrop && setLocationDrop((prev) => !prev);
+            }}
           >
             <button>{selectedJobType}</button>
             {jobTypeDrop ? <IoChevronUp /> : <IoChevronDownSharp />}
@@ -165,12 +197,12 @@ const SearchBar = () => {
               {JobTypes.map((item) => (
                 <button
                   className={` rounded-lg py-[.25rem] flex text-start w-full px-4 justify-between items-center`}
-                  onClick={() =>
+                  onClick={() => {
                     setSelectedJobType(
                       item,
                       setJobTypeDrop((prev) => !prev)
-                    )
-                  }
+                    );
+                  }}
                 >
                   {item}
                   {selectedCategory === item && <IoCheckmarkOutline />}
@@ -182,7 +214,7 @@ const SearchBar = () => {
 
         {/* Filter */}
         <div className="hidden">
-        <Filter />
+          <Filter />
         </div>
       </form>
       <HiOutlineDotsVertical />

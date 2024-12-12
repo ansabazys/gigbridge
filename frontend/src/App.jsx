@@ -4,15 +4,20 @@ import Register from "./pages/Register/Register";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
+import GigDetails from "./pages/GigDetails/GigDetails";
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="register" element={<Register />} />
-      <Route path="login" element={<Login />} />
-      <Route path="home" element={<Home />} />
-    </Routes>
+    
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="register" element={<Register />} />
+        <Route path="login" element={<Login />} />
+        <Route path="home" element={<Home />} />
+        <Route path="/home/messages" element={<Home />} />
+        <Route path="/home/gig-details" element={<Home />} />
+      </Routes>
+    
   );
 };
 
