@@ -14,7 +14,7 @@ import { LuDot } from "react-icons/lu";
 
 import Requirements from "../../components/Requirements";
 import Location from "../../components/Location";
-import Header from "../../components/Header";
+
 
 const GigDetails = () => {
   const { id } = useParams(); // Get the gig id from the URL parameters
@@ -65,18 +65,19 @@ const GigDetails = () => {
   });
 
   return (
-    <section className="">
-      <div className="flex flex-col justify-center  w-full  items-center divide-y">
+    <section className="h-full">
+      
+      <div className="flex flex-col justify-center w-full  items-center divide-y">
         {gig.map((gig) => (
-          <div className="w-full ">
-            <div className="static">
+          <div className="w-full">
+            {/* <div className="static">
               <Header
                 avatar={avatar}
                 name={gig.user.name}
                 location={gig.location}
                 postedAt={gig.postedAt}
               />
-            </div>
+            </div> */}
 
             <section className="w-full  p-8 flex justify-center">
               <div

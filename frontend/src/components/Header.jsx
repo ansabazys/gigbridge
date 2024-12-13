@@ -1,9 +1,30 @@
 import React from "react";
 import { GoArrowLeft, GoArrowUpRight } from "react-icons/go";
 import { LuDot } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import avatar from "../assets/avatar.png";
+import img from "../assets/image.jpg";
 
-const Header = ({avatar, name, location, postedAt}) => {
+const Header = () => {
+
+    const { id } = useParams(); // Get the gig id from the URL parameters
+
+    const gig = {
+          id: id,
+          title: "Logo Design for Startup",
+          description:
+            "Looking for a minimalist logo designer for my tech startup. The project requires skills in Adobe Illustrator, Sketch, and Figma. Looking for a minimalist logo designer for my tech startup. The project requires skills in Adobe Illustrator, Sketch, and Figma.",
+          image: img,
+          user: {
+            name: "John Doe",
+            avatar: avatar,
+          },
+          postedAt: "2 h",
+          location: "Thrissur",
+          jobType: "remote",
+          targetDate: "2024-12-14T01:00:00",
+        }
+
   return (
     <header className="h-20 px-4 border-b hidden md:flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -16,19 +37,19 @@ const Header = ({avatar, name, location, postedAt}) => {
           <div className="flex items-center">
             <img
               src={avatar}
-              alt={name}
+              alt={gig.name}
               className="w-12 h-12 rounded-full mr-1"
             />
 
             <div className="flex flex-col  justify-center">
               <div className="flex items-center justify-center">
-                <h4 className="">{name}</h4>
+                <h4 className="">{gig.user.name}</h4>
                 <p className="text-xs flex items-center text-gray-500">
                   {" "}
-                  <LuDot /> {postedAt}
+                  <LuDot /> {gig.postedAt}
                 </p>
               </div>
-              <p className="text-sm text-gray-500">{location}</p>
+              <p className="text-sm text-gray-500">{gig.location}</p>
             </div>
           </div>
         </div>
@@ -42,7 +63,7 @@ const Header = ({avatar, name, location, postedAt}) => {
           </Link>
 
           <button className="flex items-center gap-1">
-            <GoArrowUpRight  size={20} />
+            <GoArrowUpRight size={20} />
             <span className="text-sm">Share</span>
           </button>
         </div>
