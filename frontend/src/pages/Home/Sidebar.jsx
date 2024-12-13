@@ -36,7 +36,7 @@ const Sidebar = ({ user, onLogout }) => {
             className="w-9 h-9 lg:w-12 lg:h-12 rounded-full"
           />
           <div className="hidden lg:block">
-            <h2 className=" text-lg font-medium">Ansab</h2>
+            <h2 className=" text-lg font-medium">Salman</h2>
           </div>
         </div>
 

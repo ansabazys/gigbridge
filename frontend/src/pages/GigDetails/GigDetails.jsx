@@ -1,95 +1,144 @@
 // src/pages/GigDetails.js
-import React from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import avatar from "../../assets/avatar.png";
 import img from "../../assets/image.jpg";
-import { GoArrowLeft, GoArrowUpRight, GoClock } from "react-icons/go";
+import {
+  GoArrowLeft,
+  GoArrowUpRight,
+  GoClock,
+  GoKebabHorizontal,
+} from "react-icons/go";
 import Countdown from "../../components/CountDown";
+import { LuDot } from "react-icons/lu";
+
+import Requirements from "../../components/Requirements";
+import Location from "../../components/Location";
+import Header from "../../components/Header";
 
 const GigDetails = () => {
   const { id } = useParams(); // Get the gig id from the URL parameters
 
   // Find the gig based on the id (in a real app, this would be fetched from a server)
-  const gig = {
-    id: id,
-    title: "Logo Design for Startup",
-    description:
-      "Looking for a minimalist logo designer for my tech startup. The project requires skills in Adobe Illustrator, Sketch, and Figma.",
-    image: img,
-    user: {
-      name: "John Doe",
-      avatar: avatar,
+  const gig = [
+    {
+      id: id,
+      title: "Logo Design for Startup",
+      description:
+        "Looking for a minimalist logo designer for my tech startup. The project requires skills in Adobe Illustrator, Sketch, and Figma. Looking for a minimalist logo designer for my tech startup. The project requires skills in Adobe Illustrator, Sketch, and Figma.",
+      image: img,
+      user: {
+        name: "John Doe",
+        avatar: avatar,
+      },
+      postedAt: "2 h",
+      location: "Thrissur",
+      jobType: "remote",
+      targetDate: "2024-12-14T01:00:00",
     },
-    postedAt: "2 h",
-    location: "Thrissur",
-    jobType: "remote",
-    targetDate: "2024-12-14T01:00:00",
-  };
+  ];
+
+  const [showMoreState, setShowMoreState] = useState(false);
+
+  const qualifications = [
+    "Proficiency in Python",
+    "2+ years in graphic design",
+    "Must own a laptop",
+  ];
+
+  const location = "TechHub Co-working Space, Downtown Seattle";
+  const address = "1234 Innovation Avenue, Suite 567, Seattle, WA 98101";
+  const notes = [
+    "Accessible by public transportation (5-minute walk from Pike Place Station).",
+    "Free parking available for gig workers in the building garage.",
+    "Gig includes travel reimbursements up to $20 per day.",
+  ];
+
+  const dateTimeString = "2024-12-14T01:00:00";
+  const readableFormat = new Date(dateTimeString).toLocaleString("en-US", {
+    weekday: "long", // e.g., Saturday
+    year: "numeric", // e.g., 2024
+    month: "long",   // e.g., December
+    day: "numeric",  // e.g., 14
+    hour: "numeric", // e.g., 1 AM
+    minute: "numeric", // e.g., 00
+  });
 
   return (
-    <section className="h-full w-full ite flex flex-col bg-purple-700  justify-center">
-      <header className="h-20 border-b flex items-center px-4">
-        <Link to={"/home"} >
-          <GoArrowLeft size={30} />
-        </Link>
-      </header>
-      <main className="w-full flex h-full justify-center">
-        <div className="bg-white h-full p-6 max-w-2xl">
-          {/* Header */}
-          <div className="flex items-center mb-6 ">
-            <img
-              src={gig.user.avatar}
-              alt={gig.user.name}
-              className="w-16 h-16 rounded-full mr-4"
-            />
-            <div>
-              <h2 className="text-xl font-semibold">{gig.user.name}</h2>
-              <p className="text-sm text-gray-500">{gig.location}</p>
-              <p className="text-xs text-gray-400">
-                <GoClock size={14} className="inline mr-1" />
-                {gig.postedAt}
-              </p>
+    <section className="">
+      <div className="flex flex-col justify-center  w-full  items-center divide-y">
+        {gig.map((gig) => (
+          <div className="w-full ">
+            <div className="static">
+              <Header
+                avatar={avatar}
+                name={gig.user.name}
+                location={gig.location}
+                postedAt={gig.postedAt}
+              />
             </div>
+
+            <section className="w-full  p-8 flex justify-center">
+              <div
+                to={"/home/gig-details"}
+                key={gig.id}
+                className="w-full max-w-xl h-full  bg-white  overflow-hidden "
+              >
+                {/* Content */}
+                <div className=" grid gap-4">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-medium text-3xl">{gig.title}</h3>
+                    <p className="italic underline">remote</p>
+                  </div>
+
+                  <p className="text-gray-700 inline">
+                    <span
+                      className={`${
+                        showMoreState[gig.id]
+                          ? "line-clamp-none"
+                          : "line-clamp-2"
+                      } inline-flex`}
+                    >
+                      {gig.description}
+                    </span>
+                  </p>
+
+                  <div className="flex flex-col items-start">
+                    <p className="italic">₹100/hour</p>
+                    <p className="italic">{readableFormat}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 mt-4">
+                  {/* Image */}
+                  {gig.image ? (
+                    <img
+                      src={gig.image}
+                      alt={gig.title}
+                      className="w-full h-80 object-cover"
+                    />
+                  ) : null}
+                  {/* 
+                  <div className="mt-1 flex divide-x">
+                    <div className="flex items-center gap-2 pl-2">
+                      <GoClock />
+                      <Countdown targetDate={"2024-12-14T01:00:00"} />
+                    </div>
+                  </div> */}
+
+                  <Location
+                    location={location}
+                    address={address}
+                    notes={notes}
+                  />
+
+                  <Requirements qualifications={qualifications} />
+                </div>
+              </div>
+            </section>
           </div>
-
-          {/* Gig Title and Description */}
-          <div className="mb-4">
-            <h3 className="text-2xl font-bold mb-2">{gig.title}</h3>
-            <p className="text-gray-700">{gig.description}</p>
-          </div>
-
-          {/* Gig Image */}
-          {gig.image && (
-            <img
-              src={gig.image}
-              alt={gig.title}
-              className="w-full h-64 object-cover mb-6 rounded-md"
-            />
-          )}
-
-          {/* Countdown */}
-          <div className="flex items-center gap-2 mb-4">
-            <GoClock />
-            <Countdown targetDate={gig.targetDate} />
-          </div>
-
-          {/* Job Type */}
-          <p className="inline-block py-1 px-3 bg-gray-200 rounded-md text-sm">
-            {gig.jobType}
-          </p>
-
-          {/* Actions */}
-          <div className="flex justify-between items-center mt-6">
-            <button className="py-2 px-6 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-              Apply
-            </button>
-            <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800">
-              <GoArrowUpRight size={20} />
-              <span>Share</span>
-            </button>
-          </div>
-        </div>
-      </main>
+        ))}
+      </div>
     </section>
   );
 };

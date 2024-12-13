@@ -157,7 +157,7 @@ const GigFeed = () => {
                   <p className="border w-max px-2 rounded-md mr-2">{gig.jobType}</p>
                   <div className="flex items-center gap-2 pl-2">
                     <GoClock />
-                    <Countdown targetDate={"2024-12-14T01:00:00"} />
+                    <Countdown targetDate={"2024-12-15T01:00:00"} />
                   </div>
                 </div>
               </div>

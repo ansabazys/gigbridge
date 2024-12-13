@@ -13,9 +13,9 @@ const Home = () => {
   const { pathname } = useLocation();
   return (
     <div className="h-screen md:flex  justify-center items-center">
-      {/* <div className="md:hidden">
+      <div className="md:hidden">
         <NavbarMain />
-      </div> */}
+      </div>
       <div className="md:h-[93svh] h-full md:container w-full">
         <main className="flex items-center justify-center  md:h-full ">
           <div className=" w-full flex md:flex-row md:h-full flex-col-reverse   border">
@@ -41,13 +41,13 @@ const Home = () => {
             )}
 
             {pathname === "/home/gig-details" && (
-              <div className="w-full h-svh md:h-full lg:basis-3/5"> 
+              <div className="w-full h-svh md:h-full lg:basis-3/5 overflow-auto scrollbar-hide scroll-smooth"> 
                 <GigDetails />
               </div>
             )}
 
-            {/* <div className="lg:basis-1/5 hidden lg:block border-l">
-            </div> */}
+            <div className="lg:basis-1/5 hidden lg:block border-l">
+            </div>
             <div className="md:hidden">
               <BottomNavbar />
             </div>

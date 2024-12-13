@@ -23,7 +23,7 @@ const MessagingInterface = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full mx-auto  text-white rounded-lg">
+    <div className="flex flex-col w-full h-full mx-auto  rounded-lg">
       {/* Header */}
       <div className="flex items-center h-20 gap-4 p-4 border-b">
         <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center">
@@ -70,7 +70,7 @@ const MessagingInterface = () => {
           placeholder="Type your message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 border text-white rounded-lg px-4 py-2 outline-none"
+          className="flex-1 border rounded-lg px-4 py-2 outline-none"
         />
         <button
           type="submit"
