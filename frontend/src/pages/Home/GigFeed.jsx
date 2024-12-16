@@ -82,9 +82,7 @@ const GigFeed = ({ gig }) => {
   const [bookmarks, setBookmarks] = useState({});
   const [showMoreState, setShowMoreState] = useState(false);
 
-  // const [gigs, setGigs] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState([]);
   const { fname, lname } = user;
 
@@ -92,12 +90,12 @@ const GigFeed = ({ gig }) => {
     const currentTime = new Date();
     const postTime = new Date(isoString);
     const timeDifference = currentTime - postTime; // Difference in milliseconds
-  
+
     const seconds = Math.floor(timeDifference / 1000); // Convert to seconds
     const minutes = Math.floor(seconds / 60); // Convert to minutes
     const hours = Math.floor(minutes / 60); // Convert to hours
     const days = Math.floor(hours / 24); // Convert to days
-  
+
     if (days > 0) {
       return `${days}d`; // If it's more than a day
     }
@@ -110,25 +108,7 @@ const GigFeed = ({ gig }) => {
     return `${seconds}s`; // If it's less than a minute
   }
 
-
-  
-
-
-
-  const toggleShowMore = (id) => {
-    setShowMoreState((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const toggleLike = (id) => {
-    setLikes((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleBookmark = (id) => {
-    setBookmarks((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
+ 
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -148,15 +128,14 @@ const GigFeed = ({ gig }) => {
     fetchUserProfile(); // Fetch user profile by ID
   }, [gig.user]);
 
-  console.log(gig.createdAt);
 
   return (
-    <div className="w-full pb-12 md:pb-0   scrollbar-hide scroll-smooth px-4  ">
+    <div className="w-full  scrollbar-hide scroll-smooth px-5 ">
       <div className="flex flex-col justify-center w-full  items-center divide-y">
         <Link
           to={"/home/gig-details"}
           key={Math.random()}
-          className="w-full max-w-md border-b bg-white  overflow-hidden mb-4"
+          className="w-full max-w-md pb-4 h-full  bg-white  overflow-hidden "
         >
           {/* Header */}
           <div className="flex items-center py-4 w-full justify-between">
@@ -199,13 +178,7 @@ const GigFeed = ({ gig }) => {
               <h3 className="font-medium text-lg">{gig.title}</h3>
 
               <p className="text-gray-700 inline">
-                <span
-                  className={`${
-                    showMoreState[gig.id] ? "line-clamp-none" : "line-clamp-2"
-                  } inline-flex`}
-                >
-                  {gig.description}
-                </span>
+                <span className="line-clamp-2">{gig.description}</span>
               </p>
 
               <div className="mt-1 flex divide-x">

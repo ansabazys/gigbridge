@@ -17,7 +17,7 @@ const validationSchema = Yup.object({
     .max(20, "Username must be less than 20 characters"),
   lname: Yup.string()
     .required("Username is required")
-    .min(3, "Username must be at least 3 characters long")
+    .min(1, "Username must be at least 3 characters long")
     .max(20, "Username must be less than 20 characters"),
   email: Yup.string()
     .required("Email is required")

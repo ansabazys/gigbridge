@@ -11,17 +11,26 @@ import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import Filter from "./Filter";
 
-const SearchBar = () => {
+const SearchBar = ({
+  searchValue,
+  locationValue,
+  jobTypeValue,
+  categoryValue,
+}) => {
   const [categoryDrop, setCategoryDrop] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [locationDrop, setLocationDrop] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [jobTypeDrop, setJobTypeDrop] = useState(false);
   const [selectedJobType, setSelectedJobType] = useState("Job type");
+  const [searchInput, setSearchInput] = useState("");
 
-  const Categories = ["Grapic design", "Programming", "Marketing", "Writing"];
-  const JobTypes = ["Freelance", "Part-time", "Full-time", "Contract"];
+
+  const Categories = ["Design", "Development", "Marketing", "Writing", "Other"];
+  const JobTypes = ["on-site", "remote"];
   const Locations = [
+    "Thrissur",
+    "Pattambi",
     "New York",
     "Los Angeles",
     "Chicago",
@@ -43,36 +52,76 @@ const SearchBar = () => {
     "San Jose",
     "Orlando",
   ];
+  const handleClickOutside = () => {
+    setCategoryDrop(false);
+    setJobTypeDrop(false);
+    setLocationDrop(false);
+  };
 
-  const handleCategory = (category) => {
-    setSelectedCategory((prev) => {
-      if (prev.includes(category)) {
-        return prev.filter((item) => item != category);
-      } else {
-        return [...prev, category];
-      }
+  useEffect(() => {
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  const handleComponentClick = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleCategorySelection = (category) => {
+    const updatedCategories = selectedCategory.includes(category)
+      ? selectedCategory.filter((cat) => cat !== category)
+      : [...selectedCategory, category];
+
+    setSelectedCategory(updatedCategories);
+    categoryValue({
+      search: searchInput,
+      category: updatedCategories,
+      location: selectedLocation,
+      jobType: selectedJobType,
     });
   };
 
-  const handleClickOutside = () => {
-    setCategoryDrop(false)
-    setJobTypeDrop(false)
-    setLocationDrop(false)
-  }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    searchValue({
+      search: value,
+      category: selectedCategory,
+      location: selectedLocation,
+      jobType: selectedJobType,
+    });
+  };
 
-  useEffect(() => {
-    window.addEventListener('click', handleClickOutside);
+  const handleLocation = (loc) => {
+    setSelectedLocation(
+      loc,
+      setLocationDrop((prev) => !prev)
+    ),
+      jobTypeDrop && setJobTypeDrop((prev) => !prev),
+      categoryDrop && setCategoryDrop((prev) => !prev);
+    locationValue({
+      search: searchInput,
+      category: selectedCategory,
+      location: loc,
+      jobType: selectedJobType,
+    });
+  };
 
-    return () => {
-      window.removeEventListener('click', handleClickOutside)
-    }
-  },[])
+  const handleJobType = (jobType) => {
+    setSelectedJobType(
+      jobType,
+      setJobTypeDrop((prev) => !prev)
+    );
+    jobTypeValue({
+      search: searchInput,
+      category: selectedCategory,
+      location: selectedLocation,
+      jobType: jobType,
+    });
+  };
 
-  const handleComponentClick = (e) => {
-    e.stopPropagation()
-  }
-
-  
   return (
     <div className="h-20 border-b flex items-center justify-between px-5 w-full">
       <form
@@ -81,7 +130,13 @@ const SearchBar = () => {
       >
         <div className="flex gap-1 py-[.3rem] px-[.6875rem] border justify-between rounded-lg items-center w-full">
           <IoSearch />
-          <input type="text" placeholder="Search" className="  outline-none" />
+          <input
+            type="text"
+            placeholder="Search"
+            className="outline-none"
+            name="search"
+            onChange={handleInputChange}
+          />
         </div>
 
         <div className="hidden lg:block" onClick={handleComponentClick}>
@@ -90,7 +145,7 @@ const SearchBar = () => {
             onClick={() => {
               setCategoryDrop((prev) => !prev),
                 jobTypeDrop && setJobTypeDrop((prev) => !prev),
-                locationDrop && setLocationDrop((prev) => !prev)
+                locationDrop && setLocationDrop((prev) => !prev);
             }}
           >
             <PiPlusCircleBold size={20} />
@@ -99,7 +154,10 @@ const SearchBar = () => {
               <div className="divide-x">
                 {selectedCategory.length < 2 ? (
                   selectedCategory.map((dt) => (
-                    <span className="px-2 ml-2 rounded-md bg-gray-200">
+                    <span
+                      className="px-2 ml-2 rounded-md bg-gray-200"
+                      key={Math.random()}
+                    >
                       {dt}
                     </span>
                   ))
@@ -114,13 +172,14 @@ const SearchBar = () => {
             <div className="absolute p-1 mt-1 rounded-lg flex flex-col justify-center items-center gap-2 bg-white border">
               {Categories.map((category) => (
                 <button
-                  className={` rounded-lg py-[.25rem] flex text-start w-full px-2 gap-2 hover:bg-slate-100 items-center`}
-                  onClick={() => handleCategory(category)}
+                  key={category} // Use category as key since it is unique
+                  className="rounded-lg py-[.25rem] flex text-start w-full px-2 gap-2 hover:bg-slate-100 items-center"
+                  onClick={() => handleCategorySelection(category)} // Toggle selection
                 >
                   {selectedCategory.includes(category) ? (
-                    <ImCheckboxChecked />
+                    <ImCheckboxChecked /> // Show checked icon if selected
                   ) : (
-                    <ImCheckboxUnchecked />
+                    <ImCheckboxUnchecked /> // Show unchecked icon if not selected
                   )}
                   {category}
                 </button>
@@ -160,14 +219,9 @@ const SearchBar = () => {
                 {Locations.map((location) => (
                   <button
                     className={` rounded-lg py-[.25rem] flex text-start w-full px-2 gap-2 hover:bg-slate-100 items-center`}
-                    onClick={() => {
-                      setSelectedLocation(
-                        location,
-                        setLocationDrop((prev) => !prev)
-                      ),
-                        jobTypeDrop && setJobTypeDrop((prev) => !prev),
-                        categoryDrop && setCategoryDrop((prev) => !prev);
-                    }}
+                    name="location"
+                    key={Math.random()}
+                    onClick={() => handleLocation(location)}
                   >
                     {location}
                   </button>
@@ -197,12 +251,8 @@ const SearchBar = () => {
               {JobTypes.map((item) => (
                 <button
                   className={` rounded-lg py-[.25rem] flex text-start w-full px-4 justify-between items-center`}
-                  onClick={() => {
-                    setSelectedJobType(
-                      item,
-                      setJobTypeDrop((prev) => !prev)
-                    );
-                  }}
+                  onClick={() => handleJobType(item)}
+                  key={Math.random()}
                 >
                   {item}
                   {selectedCategory === item && <IoCheckmarkOutline />}

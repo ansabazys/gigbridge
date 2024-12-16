@@ -8,6 +8,7 @@ const gigSchema = new mongoose.Schema(
     budget: { type: Number, required: true },
     deadline: { type: Date, required: true },
     location: { type: String },
+    category: { type: String },
     jobType: { type: String, enum: ["remote", "on-site"], default: "remote" },
     status: {
       type: String,

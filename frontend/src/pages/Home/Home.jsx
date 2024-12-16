@@ -19,15 +19,23 @@ import axios from "axios";
 const Home = () => {
   const { pathname } = useLocation();
 
-  const [gigs, setGigs] = useState([]);
+  const [gigs, setGigs] = useState([]); // Original list of gigs
+  const [filteredGigs, setFilteredGigs] = useState([]); // Filtered gigs
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState({
+    search: "",
+    category: [],
+    location: "",
+    jobType: "",
+  });
 
   const getGigs = () => {
     axios
       .get("http://localhost:5000/api/gigs")
       .then((response) => {
         setGigs(response.data);
+        setFilteredGigs(response.data); // Initialize filtered gigs with all gigs
         setLoading(false);
       })
       .catch((error) => {
@@ -38,30 +46,85 @@ const Home = () => {
 
   useEffect(() => {
     getGigs();
-  },[pathname]);
+  }, [pathname]);
 
+  const handleFilter = (data) => {
+    setFilter((prev) => {
+      const updatedFilter = { ...prev, ...data };
 
+      // Safely handle values
+      const searchValue =
+        typeof updatedFilter.search.search === "string"
+          ? updatedFilter.search.search
+          : "";
+      const categoryValue = updatedFilter.category || [];
+      const locationValue =
+        typeof updatedFilter.location.location === "string"
+          ? updatedFilter.location.location.trim()
+          : "";
+      const jobTypeValue =
+        typeof updatedFilter.jobType.jobType === "string"
+          ? updatedFilter.jobType.jobType.trim()
+          : "";
+
+      // // Apply strict filtering logic
+      // const filtered = gigs.filter((gig) => {
+      //   const matchesSearch = searchValue === "" || gig.title.toLowerCase().includes(searchValue);
+      //   const matchesCategory = categoryValue.length === 0 || categoryValue.some((cat) => gig.category.includes(cat));
+      //
+      //   const matchesJobType = jobTypeValue === "" || gig.jobType === jobTypeValue;
+
+      //   // Ensure the gig matches all active filters
+      //   return matchesSearch || matchesCategory || matchesLocation || matchesJobType;
+      // });
+
+      const filtered = gigs.filter((gig) => {
+        const matchesSearch =
+          searchValue === "" ||
+          gig.title.toLowerCase().includes(searchValue.toLowerCase());
+        const matchesCategory =
+          categoryValue.length === 0 ||
+          categoryValue.category.some((cat) => gig.category.includes(cat));
+        const matchesJobType =
+          jobTypeValue === "" || gig.jobType === jobTypeValue;
+        const matchesLocation =
+          locationValue === "" || gig.location === locationValue;
+
+        return matchesSearch && matchesCategory && matchesJobType &&matchesLocation;
+      });
+
+      console.log(updatedFilter);
+
+      setFilteredGigs(filtered); // Update filtered gigs
+      return updatedFilter; // Update the filter state
+    });
+  };
 
   return (
-    <div className="h-screen md:flex  justify-center items-center">
+    <div className="h-screen md:flex justify-center items-center">
       <div className="md:hidden sticky top-0">
         <NavbarMain />
       </div>
       <div className="md:h-[93svh] h-full md:container w-full">
-        <main className="flex items-center justify-center  md:h-full ">
-          <div className=" w-full flex md:flex-row md:h-full flex-col-reverse   border">
-            <div className="hidden md:block lg:basis-1/5 border-r ">
+        <main className="flex items-center justify-center h-full md:h-full">
+          <div className="w-full flex md:flex-row md:h-full flex-col-reverse border">
+            <div className="hidden md:block lg:basis-1/5 border-r">
               <Sidebar />
             </div>
 
             {pathname === "/home" && (
-              <div className="w-full h-full flex flex-col lg:basis-3/5">
+              <div className="w-full flex flex-col lg:basis-3/5">
                 <div className="hidden md:block">
-                  <SearchBar />
+                  <SearchBar
+                    searchValue={(value) => handleFilter({ search: value })}
+                    locationValue={(value) => handleFilter({ location: value })}
+                    jobTypeValue={(value) => handleFilter({ jobType: value })}
+                    categoryValue={(value) => handleFilter({ category: value })}
+                  />
                 </div>
                 <div className="overflow-auto scrollbar-hide scroll-smooth flex-1">
-                  {gigs.reverse().map((gig) => (
-                  <GigFeed gig={gig} />
+                  {filteredGigs.reverse().map((gig) => (
+                    <GigFeed gig={gig} key={gig._id} />
                   ))}
                 </div>
               </div>

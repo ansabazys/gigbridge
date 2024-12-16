@@ -8,7 +8,7 @@ const BottomNavbar = () => {
   const {pathname} = useLocation()
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-around items-center h-12">
+    <div className="fixed bottom-0 left-0 right-0 bg-white  shadow-md flex justify-around items-center h-12">
       <Link to="/home" className="hover:text-blue-500 flex flex-col w-9 justify-center items-center">
       { pathname === '/home' ? <GoHomeFill className="text-2xl" /> : <GoHome className="text-2xl"/>}
         

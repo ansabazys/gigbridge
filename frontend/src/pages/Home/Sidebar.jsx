@@ -4,30 +4,20 @@ import {
   GoBell,
   GoBellFill,
   GoBriefcase,
-  GoComment,
-  GoFileDirectory,
   GoHome,
   GoHomeFill,
   GoPerson,
-  GoPersonFill,
   GoPlus,
-  GoQuestion,
-  GoSearch,
   GoSignOut,
 } from "react-icons/go";
 import { IoSettingsOutline, IoSettingsSharp } from "react-icons/io5";
-import {
-  BiMessage,
-  BiSolidDashboard,
-  BiSolidMessage,
-  BiWallet,
-} from "react-icons/bi";
+import { BiMessage, BiSolidMessage } from "react-icons/bi";
 import avatar from "../../assets/avatar.png";
 import { AuthContext } from "../../context/AuthContext";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
-  const { logout, user } = useContext(AuthContext)
+  const { logout, user } = useContext(AuthContext);
 
   return (
     <div className="lg:grid w-full sm:flex gap-4 h-full">
@@ -85,7 +75,9 @@ const Sidebar = () => {
 
             <SidebarItem
               to="/home/notifications"
-              icon={pathname === "/home/notifications" ? <GoBellFill/> : <GoBell />}
+              icon={
+                pathname === "/home/notifications" ? <GoBellFill /> : <GoBell />
+              }
               label="Notifications"
             />
             {/* <SidebarItem

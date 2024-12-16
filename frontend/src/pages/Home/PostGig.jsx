@@ -20,6 +20,8 @@ const PostGig = () => {
     deadline: "",
   });
 
+  console.log(formData)
+
   const categories = ["Design", "Development", "Marketing", "Writing", "Other"];
 
   const handleInputChange = (e) => {
