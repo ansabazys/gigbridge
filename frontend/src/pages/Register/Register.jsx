@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { FiLock, FiEyeOff, FiUser, FiEye } from "react-icons/fi";
 import { BiLogoApple, BiLogoFacebook, BiLogoGoogle } from "react-icons/bi";
 import Navbar from "../../components/Navbar/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { AuthContext } from "../../context/AuthContext";
+
 
 // Validation Schema
 const validationSchema = Yup.object({
-  username: Yup.string()
+  fname: Yup.string()
+    .required("Username is required")
+    .min(3, "Username must be at least 3 characters long")
+    .max(20, "Username must be less than 20 characters"),
+  lname: Yup.string()
     .required("Username is required")
     .min(3, "Username must be at least 3 characters long")
     .max(20, "Username must be less than 20 characters"),
@@ -31,19 +37,29 @@ const validationSchema = Yup.object({
 
 const Register = () => {
   const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const { register } = useContext(AuthContext); // Get the register function from AuthContext
+
+  const navigate = useNavigate()
 
   const handleShow = () => {
     setShow((prev) => !prev);
   };
 
   const initialValues = {
-    username: "",
+    fname: "",
+    lname: "",
     email: "",
     password: "",
   };
 
-  const onSubmit = (values) => {
-    alert("Form submitted successfully:\n" + JSON.stringify(values, null, 2));
+  const onSubmit = async (values) => {
+    try {
+      await register(values); // Call the login function
+    } catch (err) {
+      setError("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -70,14 +86,21 @@ const Register = () => {
               validationSchema={validationSchema}
               onSubmit={onSubmit}
             >
-              {({ errors, touched, isSubmitting, values, handleBlur, handleChange }) => (
+              {({
+                errors,
+                touched,
+                isSubmitting,
+                values,
+                handleBlur,
+                handleChange,
+              }) => (
                 <Form className="grid gap-3">
-                  {/* Username Field */}
+                  {/* First name Field */}
                   <div>
                     <div
                       className={`flex items-center px-2 py-2 border rounded-lg ${
-                        touched.username
-                          ? errors.username
+                        touched.fname
+                          ? errors.fname
                             ? "border-red-500"
                             : "border-green-500"
                           : "border"
@@ -85,21 +108,43 @@ const Register = () => {
                     >
                       <FiUser />
                       <Field
-                        name="username"
+                        name="fname"
                         type="text"
                         className="bg-transparent pl-2 outline-none w-full"
-                        placeholder="Username"
-                        value={values.username.toLowerCase()}
-                        onChange={(e) => {
-                          const {value} = e.target;
-                          handleChange(e)
-                          e.target.value = value.toLowerCase()
-                        }}
+                        placeholder="First name"
                         onBlur={handleBlur}
                       />
                     </div>
                     <ErrorMessage
-                      name="username"
+                      name="fname"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
+
+                  {/* last name field */}
+
+                  <div>
+                    <div
+                      className={`flex items-center px-2 py-2 border rounded-lg ${
+                        touched.lname
+                          ? errors.lname
+                            ? "border-red-500"
+                            : "border-green-500"
+                          : "border"
+                      }`}
+                    >
+                      <FiUser />
+                      <Field
+                        name="lname"
+                        type="text"
+                        className="bg-transparent pl-2 outline-none w-full"
+                        placeholder="Last name"
+                        onBlur={handleBlur}
+                      />
+                    </div>
+                    <ErrorMessage
+                      name="lname"
                       component="div"
                       className="text-red-500 text-sm"
                     />
@@ -122,7 +167,6 @@ const Register = () => {
                         type="text"
                         className="bg-transparent pl-2 outline-none w-full"
                         placeholder="Email"
-                    
                       />
                     </div>
                     <ErrorMessage

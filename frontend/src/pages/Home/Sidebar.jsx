@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   GoBell,
@@ -8,6 +8,8 @@ import {
   GoFileDirectory,
   GoHome,
   GoHomeFill,
+  GoPerson,
+  GoPersonFill,
   GoPlus,
   GoQuestion,
   GoSearch,
@@ -21,9 +23,11 @@ import {
   BiWallet,
 } from "react-icons/bi";
 import avatar from "../../assets/avatar.png";
+import { AuthContext } from "../../context/AuthContext";
 
-const Sidebar = ({ user, onLogout }) => {
+const Sidebar = () => {
   const { pathname } = useLocation();
+  const { logout, user } = useContext(AuthContext)
 
   return (
     <div className="lg:grid w-full sm:flex gap-4 h-full">
@@ -36,7 +40,7 @@ const Sidebar = ({ user, onLogout }) => {
             className="w-9 h-9 lg:w-12 lg:h-12 rounded-full"
           />
           <div className="hidden lg:block">
-            <h2 className=" text-lg font-medium">Salman</h2>
+            <h2 className=" text-lg font-medium">{user.fname}</h2>
           </div>
         </div>
 
@@ -68,15 +72,11 @@ const Sidebar = ({ user, onLogout }) => {
           /> */}
 
             <SidebarItem
-              to="/home/my-gigs"
+              to="/home/post-gigs"
               icon={<GoPlus size={20} />}
               label="Post gig"
             />
-            <SidebarItem
-              to="/home/my-gigs"
-              icon={<GoFileDirectory />}
-              label="My Gigs"
-            />
+
             <SidebarItem
               to="/home/my-gigs"
               icon={<GoBriefcase />}
@@ -85,7 +85,7 @@ const Sidebar = ({ user, onLogout }) => {
 
             <SidebarItem
               to="/home/notifications"
-              icon={pathname === "/notifications" ? <GoBellFill /> : <GoBell />}
+              icon={pathname === "/home/notifications" ? <GoBellFill/> : <GoBell />}
               label="Notifications"
             />
             {/* <SidebarItem
@@ -93,6 +93,12 @@ const Sidebar = ({ user, onLogout }) => {
             icon={pathname === "/wallet" ? <BiSolidDashboard /> : <BiWallet />}
             label="Wallet"
           /> */}
+
+            <SidebarItem
+              to="/home/profile"
+              icon={<GoPerson />}
+              label="Profile"
+            />
           </div>
           <div className="p-3">
             <SidebarItem
@@ -113,13 +119,11 @@ const Sidebar = ({ user, onLogout }) => {
         <div className="p-4 w-full hidden  items-center   lg:block md:flex justify-center border-t">
           <button
             className="flex space-x-2 items-center px-1 text-red-400 hover:text-red-600"
-            onClick={onLogout}
+            onClick={logout}
           >
             <GoSignOut />
             <span className="hidden lg:block">Logout</span>
           </button>
-
-          
         </div>
       </aside>
     </div>
@@ -127,7 +131,6 @@ const Sidebar = ({ user, onLogout }) => {
 };
 
 const SidebarItem = ({ to, icon, label }) => {
-  console.log(label);
   return (
     <Link
       to={to}

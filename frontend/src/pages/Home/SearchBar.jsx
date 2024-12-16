@@ -72,7 +72,7 @@ const SearchBar = () => {
     e.stopPropagation()
   }
 
-  console.log(selectedCategory);
+  
   return (
     <div className="h-20 border-b flex items-center justify-between px-5 w-full">
       <form

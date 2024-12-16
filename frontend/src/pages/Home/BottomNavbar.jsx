@@ -16,13 +16,13 @@ const BottomNavbar = () => {
       <Link to="/search" className="text-gray-600 hover:text-blue-500 w-9 flex flex-col justify-center items-center">
       { pathname === '/search' ? <GoSearch className="text-2xl font-bold text-black" /> : <GoSearch className="text-2xl"/>}
       </Link>
-      <Link to="/post-gig" className="text-gray-600 hover:text-blue-500 w-9 flex flex-col justify-center items-center">
+      <Link to="/home/post-gigs" className="text-gray-600 hover:text-blue-500 w-9 flex flex-col justify-center items-center">
       { pathname === '/post-gig' ? <GoPlus className="text-3xl font-bold text-black" /> : <GoPlus className="text-3xl"/>}
       </Link>
       <Link to="/showcase" className="text-gray-600 hover:text-blue-500 w-9 flex flex-col justify-center items-center">
       { pathname === '/showcase' ? <GoBriefcase className="text-2xl font-bold text-black" /> : <GoBriefcase className="text-2xl"/>}
       </Link>
-      <Link to="/profile" className="text-gray-600 w-9 hover:text-blue-500 flex flex-col justify-center items-center">
+      <Link to="/home/profile" className="text-gray-600 w-9 hover:text-blue-500 flex flex-col justify-center items-center">
       <img
           src={avatar}
           alt="Profile"

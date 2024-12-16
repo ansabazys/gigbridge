@@ -12,7 +12,7 @@ const Navbar = () => {
     setMenuOpen((prev) => !prev);
   };
 
-  console.log(location.pathname);
+ 
 
   return (
     <header className="p-4 border-b z-20 flex justify-center items-center w-full flex-col border-black/15 md:border-none bg-white sticky top-0  md:backdrop-blur-none backdrop-blur">

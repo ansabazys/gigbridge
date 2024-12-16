@@ -1,42 +1,54 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FiLock, FiEyeOff, FiUser, FiEye } from "react-icons/fi";
 import { BiLogoApple, BiLogoGoogle, BiLogoFacebook } from "react-icons/bi";
 import Navbar from "../../components/Navbar/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+import { AuthContext } from "../../context/AuthContext";
+
 // Validation Schema with Yup
 const validationSchema = Yup.object({
-  username: Yup.string()
-    .required("Username is required")
-    .min(3, "Username must be at least 3 characters long")
-    .max(20, "Username must be less than 20 characters"),
-
+  email: Yup.string()
+    .required("Email is required")
+    .email("Invalid email address"),
   password: Yup.string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long")
     .matches(/[a-z]/, "Password must contain at least one lowercase letter")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/\d/, "Password must contain at least one number")
-    .matches(/[@$!%*?&]/, "Password must contain at least one special character")
+    .matches(
+      /[@$!%*?&]/,
+      "Password must contain at least one special character"
+    )
     .matches(/^\S*$/, "Password must not contain spaces"),
 });
 
 const Login = () => {
   const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const { login } = useContext(AuthContext); // Get the login function from AuthContext
 
   const handleShow = () => {
     setShow((prev) => !prev);
   };
 
   const initialValues = {
-    username: "",
+    email: "",
     password: "",
   };
 
-  const onSubmit = (values) => {
-    alert("Form submitted successfully:\n" + JSON.stringify(values, null, 2));
+
+
+  const onSubmit = async (values) => {
+    try {
+      await login(values); // Call the login function
+    } catch (err) {
+      setError("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -66,59 +78,59 @@ const Login = () => {
             >
               {({ touched, errors, isSubmitting }) => (
                 <Form className="grid gap-3">
-                  {/* Username Field */}
+                  {/* email Field */}
                   <div>
-                  <div
-                    className={`flex items-center px-2 py-2 border rounded-lg ${
-                      touched.username
-                        ? errors.username
-                          ? "border-red-500"
-                          : "border-green-500"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    <FiUser />
-                    <Field
-                      type="text"
-                      name="username"
-                      className="bg-transparent pl-2 outline-none w-full"
-                      placeholder="Username"
+                    <div
+                      className={`flex items-center px-2 py-2 border rounded-lg ${
+                        touched.email
+                          ? errors.email
+                            ? "border-red-500"
+                            : "border-green-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <FiUser />
+                      <Field
+                        type="text"
+                        name="email"
+                        className="bg-transparent pl-2 outline-none w-full"
+                        placeholder="Email"
+                      />
+                    </div>
+                    <ErrorMessage
+                      name="Email"
+                      component="div"
+                      className="text-red-500 text-sm"
                     />
-                  </div>
-                  <ErrorMessage
-                    name="username"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
                   </div>
 
                   {/* Password Field */}
                   <div>
-                  <div
-                    className={`flex items-center px-2 py-2 border rounded-lg ${
-                      touched.password
-                        ? errors.password
-                          ? "border-red-500"
-                          : "border-green-500"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    <FiLock />
-                    <Field
-                      type={show ? "text" : "password"}
-                      name="password"
-                      className="bg-transparent pl-2 outline-none w-full"
-                      placeholder="Password"
-                    />
-                    <div onClick={handleShow} className="cursor-pointer">
-                      {show ? <FiEye /> : <FiEyeOff />}
+                    <div
+                      className={`flex items-center px-2 py-2 border rounded-lg ${
+                        touched.password
+                          ? errors.password
+                            ? "border-red-500"
+                            : "border-green-500"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <FiLock />
+                      <Field
+                        type={show ? "text" : "password"}
+                        name="password"
+                        className="bg-transparent pl-2 outline-none w-full"
+                        placeholder="Password"
+                      />
+                      <div onClick={handleShow} className="cursor-pointer">
+                        {show ? <FiEye /> : <FiEyeOff />}
+                      </div>
                     </div>
-                  </div>
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
                   </div>
 
                   <button

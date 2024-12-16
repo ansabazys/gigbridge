@@ -79,7 +79,7 @@ const GigDetails = () => {
               />
             </div> */}
 
-            <section className="w-full  p-8 flex justify-center">
+            <section className="w-full  p-4 flex justify-center">
               <div
                 to={"/home/gig-details"}
                 key={gig.id}
