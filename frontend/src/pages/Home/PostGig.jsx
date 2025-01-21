@@ -20,7 +20,7 @@ const PostGig = () => {
     deadline: "",
   });
 
-  console.log(formData)
+
 
   const categories = ["Design", "Development", "Marketing", "Writing", "Other"];
 
@@ -42,7 +42,6 @@ const PostGig = () => {
         }
       );
 
-      console.log("Gig Posted:", response.data);
       navigate("/home"); // Redirect to home or gig feed after posting
     } catch (err) {
       console.error("Error posting gig:", err.response?.data?.message || err.message);

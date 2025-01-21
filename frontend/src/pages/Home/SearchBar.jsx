@@ -10,6 +10,7 @@ import { PiPlusCircleBold } from "react-icons/pi";
 import { ImCheckboxChecked, ImCheckboxUnchecked } from "react-icons/im";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import Filter from "./Filter";
+import axios from "axios";
 
 const SearchBar = ({
   searchValue,
@@ -17,54 +18,77 @@ const SearchBar = ({
   jobTypeValue,
   categoryValue,
 }) => {
+
+  // const Locations = [
+  //   "Thrissur",
+  //   "Pattambi",
+  //   "New York",
+  //   "Los Angeles",
+  //   "Chicago",
+  //   "Houston",
+  //   "San Francisco",
+  //   "Miami",
+  //   "Dallas",
+  //   "Seattle",
+  //   "Boston",
+  //   "Atlanta",
+  //   "Denver",
+  //   "Austin",
+  //   "San Diego",
+  //   "Washington, D.C.",
+  //   "Las Vegas",
+  //   "Phoenix",
+  //   "Philadelphia",
+  //   "Portland",
+  //   "San Jose",
+  //   "Orlando",
+  // ];
+
   const [categoryDrop, setCategoryDrop] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [locationDrop, setLocationDrop] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [jobTypeDrop, setJobTypeDrop] = useState(false);
-  const [selectedJobType, setSelectedJobType] = useState("Job type");
+  const [selectedJobType, setSelectedJobType] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("I")
+  const [places, setPlaces] = useState([])
 
 
   const Categories = ["Design", "Development", "Marketing", "Writing", "Other"];
   const JobTypes = ["on-site", "remote"];
-  const Locations = [
-    "Thrissur",
-    "Pattambi",
-    "New York",
-    "Los Angeles",
-    "Chicago",
-    "Houston",
-    "San Francisco",
-    "Miami",
-    "Dallas",
-    "Seattle",
-    "Boston",
-    "Atlanta",
-    "Denver",
-    "Austin",
-    "San Diego",
-    "Washington, D.C.",
-    "Las Vegas",
-    "Phoenix",
-    "Philadelphia",
-    "Portland",
-    "San Jose",
-    "Orlando",
-  ];
+ 
+
+  const fetchPlaces = async () => {
+    const url = `https://nominatim.openstreetmap.org/search?q=${searchQuery}&format=json`;
+    try {
+      const response = await fetch(url)
+      const data = await response.json()
+      setPlaces(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleClickOutside = () => {
     setCategoryDrop(false);
     setJobTypeDrop(false);
     setLocationDrop(false);
   };
 
+  
+
   useEffect(() => {
     window.addEventListener("click", handleClickOutside);
-
+    
     return () => {
       window.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    fetchPlaces()
+  }, [searchQuery])
 
   const handleComponentClick = (e) => {
     e.stopPropagation();
@@ -108,6 +132,10 @@ const SearchBar = ({
       jobType: selectedJobType,
     });
   };
+
+  const handleLocationSearch = (loc) => {
+    setSearchQuery(loc)
+  }
 
   const handleJobType = (jobType) => {
     setSelectedJobType(
@@ -213,17 +241,19 @@ const SearchBar = ({
                   id=""
                   placeholder="Search"
                   className="py-[.25rem] px-[.6875rem] outline-none"
+                  onChange={(event) => handleLocationSearch(event.target.value)}
                 />
               </div>
               <div className="overflow-auto scrollbar-hide  h-60 w-full">
-                {Locations.map((location) => (
+                {places.map((location) => (
+                  
                   <button
-                    className={` rounded-lg py-[.25rem] flex text-start w-full px-2 gap-2 hover:bg-slate-100 items-center`}
+                    className={`rounded-lg py-[.25rem] flex text-start w-full px-2 gap-2 hover:bg-slate-100 items-center`}
                     name="location"
                     key={Math.random()}
-                    onClick={() => handleLocation(location)}
+                    onClick={() => handleLocation(location.name)}
                   >
-                    {location}
+                    {location.name}
                   </button>
                 ))}
               </div>
@@ -242,7 +272,7 @@ const SearchBar = ({
                 locationDrop && setLocationDrop((prev) => !prev);
             }}
           >
-            <button>{selectedJobType}</button>
+            <button>Job type</button>
             {jobTypeDrop ? <IoChevronUp /> : <IoChevronDownSharp />}
           </div>
 

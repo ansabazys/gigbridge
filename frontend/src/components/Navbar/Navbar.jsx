@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BiMenuAltRight, BiX } from "react-icons/bi";
 import { Link, useLocation } from "react-router-dom";
+import { RiShakeHandsLine } from "react-icons/ri";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,9 +20,9 @@ const Navbar = () => {
       <div className="container">
         <div className="flex justify-between items-center border-black/15  rounded-2xl  mx-auto">
           <div className="md:px-4 w-52 ">
-            <div className="border h-10 w-10 rounded-lg inline-flex justify-center items-center border-black/15">
+            <div className="border h-10 w-10 inline-flex justify-center items-center">
               <Link to={"/"} className="text-2xl font-bold">
-                G
+                <RiShakeHandsLine />
               </Link>
             </div>
           </div>

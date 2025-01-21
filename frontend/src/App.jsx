@@ -73,6 +73,14 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/home/apply/:id"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
 
         {/* Add any other routes here */}
       </Routes>

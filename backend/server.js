@@ -13,7 +13,7 @@ app.use(express.json());
 
 const corsOptions = {
   origin: "http://localhost:5173", // Replace with your frontend URL
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true, // Allow cookies to be sent
 };
 

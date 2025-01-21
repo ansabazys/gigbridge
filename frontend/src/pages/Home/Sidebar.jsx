@@ -10,6 +10,7 @@ import {
   GoPlus,
   GoSignOut,
 } from "react-icons/go";
+import { PiTelegramLogo } from "react-icons/pi";
 import { IoSettingsOutline, IoSettingsSharp } from "react-icons/io5";
 import { BiMessage, BiSolidMessage } from "react-icons/bi";
 import avatar from "../../assets/avatar.png";
@@ -67,6 +68,7 @@ const Sidebar = () => {
               label="Post gig"
             />
 
+           
             <SidebarItem
               to="/home/my-gigs"
               icon={<GoBriefcase />}

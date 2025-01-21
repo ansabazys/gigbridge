@@ -6,85 +6,13 @@ import { GoArrowUpRight, GoClock, GoKebabHorizontal } from "react-icons/go";
 import Countdown from "../../components/CountDown";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { GoTrash } from "react-icons/go";
 
-// const gigs = [
-//   {
-//     id: 1,
-//     title: "Logo Design for Startup",
-//     description:
-//       "Looking for a minimalist logo designer for my tech startup.",
-//     // image: "https://via.placeholder.com/600x400",
-//     user: {
-//       name: "John Doe",
-//       avatar: avatar,
-//     },
-//     postedAt: "2 h",
-//     location: "Thrissur",
-//     jobType: "remote"
-//   },
-//   {
-//     id: 2,
-//     title: "Build a Responsive Website",
-//     description:
-//       "Need a full-stack developer to create a responsive e-commerce website.",
-//     image: img,
-//     user: {
-//       name: "Jane Smith",
-//       avatar: avatar,
-//     },
-//     postedAt: "5 h",
-//     location: "Pattambi",
-//     jobType: "on-site"
-//   },
-//   {
-//     id: 3,
-//     title: "Social Media Marketing",
-//     description: "Looking for someone to manage my social media platforms.",
-//     image: "",
-//     user: {
-//       name: "Mark Johnson",
-//       avatar: avatar,
-//     },
-//     postedAt: "1 d",
-//     location: "Palakkad",
-//     jobType: "remote"
-//   },
-//   {
-//     id: 4,
-//     title: "Logo Design for Startup",
-//     description: "Looking for a minimalist logo designer for my tech startup.",
-//     image: img,
-//     user: {
-//       name: "John Doe",
-//       avatar: avatar,
-//     },
-//     postedAt: "2 h",
-//     location: "Thrissur",
-//     jobType: "remote"
-//   },
-//   {
-//     id: 5,
-//     title: "Social Media Marketing",
-//     description: "Looking for someone to manage my social media platforms.",
-//     image: "",
-//     user: {
-//       name: "Mark Johnson",
-//       avatar: avatar,
-//     },
-//     postedAt: "1 d",
-//     location: "Palakkad",
-//     jobType: "remote"
-//   },
-// ];
-
-const GigFeed = ({ gig }) => {
-  const [likes, setLikes] = useState({});
-  const [bookmarks, setBookmarks] = useState({});
-  const [showMoreState, setShowMoreState] = useState(false);
-
-  const [loading, setLoading] = useState(false)
+const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState([]);
-  const { fname, lname } = user;
+  const { fname, lname, _id } = user;
+
 
   function timeAgo(isoString) {
     const currentTime = new Date();
@@ -108,8 +36,6 @@ const GigFeed = ({ gig }) => {
     return `${seconds}s`; // If it's less than a minute
   }
 
- 
-
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -128,17 +54,16 @@ const GigFeed = ({ gig }) => {
     fetchUserProfile(); // Fetch user profile by ID
   }, [gig.user]);
 
-
   return (
-    <div className="w-full  scrollbar-hide scroll-smooth px-5 ">
-      <div className="flex flex-col justify-center w-full  items-center divide-y">
-        <Link
-          to={"/home/gig-details"}
+    <div className="w-full  scrollbar-hide scroll-smooth px-5 py-4 ">
+      <div className="flex flex-col justify-center w-full  items-center divide-y ">
+        <div
+          // to={"/home/gig-details"}
           key={Math.random()}
-          className="w-full max-w-md pb-4 h-full  bg-white  overflow-hidden "
+          className="w-full max-w-md  h-full  bg-white  overflow-hidden border-b border-black/20 pb-4"
         >
           {/* Header */}
-          <div className="flex items-center py-4 w-full justify-between">
+          <div className="flex items-center py-0 w-full justify-between">
             <div className="flex">
               <img
                 src={avatar}
@@ -160,18 +85,24 @@ const GigFeed = ({ gig }) => {
               </div>
             </div>
             <div className="cursor-pointer">
-              <GoKebabHorizontal />
+              {isGigUser ? (
+                <button
+                  className="border px-2 py-1 rounded-md"
+                  onClick={() => handleDelete(gig._id)}
+                >
+                  <GoTrash />
+                </button>
+              ) : null}
             </div>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {/* Image */}
-            {gig.image ? (
-              <img
-                src={gig.image}
-                alt={gig.title}
-                className="w-full h-64 object-cover"
-              />
-            ) : null}
+
+            <img
+              src={img}
+              alt={gig.title}
+              className="w-full h-64 object-cover rounded-2xl"
+            />
 
             {/* Content */}
             <div className="">
@@ -185,19 +116,45 @@ const GigFeed = ({ gig }) => {
                 <p className="border w-max px-2 rounded-md mr-2">
                   {gig.jobType}
                 </p>
-                <div className="flex items-center gap-2 pl-2">
+                {/* <div className="flex items-center gap-2 pl-2">
                   <GoClock />
                   <Countdown targetDate={gig.deadline} />
+                </div> */}
+
+                <div className="pl-2">
+                  <span>${gig.budget}</span>
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex justify-between items-center py-2">
+            <div className="flex justify-between items-center py-0">
               <div className="flex items-center gap-4">
-                <button className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200">
-                  Apply
-                </button>
+                {/* { isApplied ? (
+                  <p className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200">
+                    Applied
+                  </p>
+                ) : (
+                  <Link
+                    className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                    to={`/home/apply/${gig._id}`}
+                  >
+                    Apply
+                  </Link>
+                )} */}
+
+                {isGigUser ? null : isApplied ? (
+                  <p className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200">
+                    Applied
+                  </p>
+                ) : (
+                  <Link
+                    className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                    to={`/home/apply/${gig._id}`}
+                  >
+                    Apply
+                  </Link>
+                )}
 
                 <button className="flex items-center gap-1">
                   <GoArrowUpRight size={20} />
@@ -206,7 +163,7 @@ const GigFeed = ({ gig }) => {
               </div>
             </div>
           </div>
-        </Link>
+        </div>
       </div>
     </div>
   );

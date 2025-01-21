@@ -15,6 +15,28 @@ const gigSchema = new mongoose.Schema(
       enum: ["open", "in-progress", "completed"],
       default: "open",
     },
+    application: [
+      {
+        applicantId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        applicantName: {
+          type: String,
+          required: true,
+        },
+        message: {
+          type: String,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected"],
+          default: "pending",
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
