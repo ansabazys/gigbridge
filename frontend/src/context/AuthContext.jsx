@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true, // Ensure cookies are included in the request
         }
       );
+      localStorage.setItem("token", JSON.stringify(response.data.token))
       setUser(response.data); // Set user after login
       localStorage.setItem("user", JSON.stringify(response.data)); // Save user in localStorage
       navigate("/home"); // Redirect to home page after login

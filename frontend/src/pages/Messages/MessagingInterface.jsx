@@ -1,86 +1,85 @@
-import React, { useState } from "react";
-import { FiSend } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { io } from "socket.io-client";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-const MessagingInterface = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, sender: "Sofia", text: "Hi, how can I help you today?", type: "received" },
-    { id: 2, sender: "User", text: "Hey, I'm having trouble with my account.", type: "sent" },
-    { id: 3, sender: "Sofia", text: "What seems to be the problem?", type: "received" },
-    { id: 4, sender: "User", text: "I can't log in.", type: "sent" },
-  ]);
+const socket = io("http://localhost:5000");
 
+const MessengeInterface = ({ userId }) => {
+  const [users, setUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [newMessage, setNewMessage] = useState("");
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (newMessage.trim()) {
-      setMessages((prev) => [
-        ...prev,
-        { id: prev.length + 1, sender: "User", text: newMessage, type: "sent" },
-      ]);
-      setNewMessage("");
+  useEffect(() => {
+    fetchUsers();
+    socket.on("message", (message) => {
+      if (message.senderId === selectedUser?._id || message.receiverId === selectedUser?._id) {
+        setMessages((prev) => [...prev, message]);
+      }
+    });
+  }, [selectedUser]);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/users");
+      setUsers(res.data);
+    } catch (error) {
+      console.error("Error fetching users", error);
     }
   };
 
-  return (
-    <div className="flex flex-col w-full h-full mx-auto  rounded-lg">
-      {/* Header */}
-      <div className="flex items-center h-20 gap-4 p-4 border-b">
-        <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center">
-          <span className="text-white font-bold text-lg">S</span>
-        </div>
-        <div className="flex flex-col">
-          <h2 className="font-semibold">Sofia Davis</h2>
-          <p className="text-sm text-gray-400">m@example.com</p>
-        </div>
-        <button className="ml-auto text-gray-400 hover:text-white">
-          <span className="text-lg font-bold">+</span>
-        </button>
-      </div>
+  const fetchMessages = async (receiverId) => {
+    setSelectedUser(users.find((user) => user._id === receiverId));
+    try {
+      const res = await axios.get(`http://localhost:5000/api/messages/${receiverId}`);
+      setMessages(res.data);
+    } catch (error) {
+      console.error("Error fetching messages", error);
+    }
+  };
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${
-              msg.type === "sent" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`max-w-xs px-4 py-2 rounded-lg ${
-                msg.type === "sent"
-                  ? "bg-white text-black border"
-                  : "bg-gray-700 text-white"
-              }`}
-            >
-              {msg.text}
-            </div>
-          </div>
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+    const messageData = { senderId: userId, receiverId: selectedUser._id, text: newMessage };
+    socket.emit("sendMessage", messageData);
+    setMessages([...messages, messageData]);
+    setNewMessage("");
+  };
+
+  return (
+    <div className="flex h-screen">
+      {/* Users List */}
+      <div className="w-1/3 border-r p-4">
+        <h2 className="text-xl font-bold mb-4">Chats</h2>
+        {users.map((user) => (
+          <button key={user._id} onClick={() => fetchMessages(user._id)} className="block w-full p-2 border-b text-left">
+            {user.name}
+          </button>
         ))}
       </div>
 
-      {/* Input Box */}
-      <form
-        className="flex items-center p-4 "
-        onSubmit={sendMessage}
-      >
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 border rounded-lg px-4 py-2 outline-none"
-        />
-        <button
-          type="submit"
-          className="ml-2 p-2 bg-gray-600 rounded-full hover:bg-gray-500"
-        >
-          <FiSend className="text-white" />
-        </button>
-      </form>
+      {/* Chat Window */}
+      <div className="w-2/3 flex flex-col">
+        {selectedUser ? (
+          <>
+            <div className="border-b p-4 font-bold">Chat with {selectedUser.name}</div>
+            <div className="flex-1 p-4 overflow-y-auto">
+              {messages.map((msg, index) => (
+                <div key={index} className={`mb-2 p-2 rounded-md ${msg.senderId === userId ? "bg-blue-500 text-white ml-auto" : "bg-gray-300 text-black"}`}>{msg.text}</div>
+              ))}
+            </div>
+            <div className="p-4 border-t flex">
+              <input type="text" className="flex-1 p-2 border" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." />
+              <button className="ml-2 p-2 bg-blue-500 text-white" onClick={sendMessage}>Send</button>
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center justify-center flex-1 text-gray-500">Select a chat</div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default MessagingInterface;
+export default MessengeInterface;

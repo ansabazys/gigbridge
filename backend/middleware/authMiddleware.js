@@ -1,34 +1,31 @@
 import jwt from "jsonwebtoken";
-import asyncHandler from "express-async-handler";
-import User from "../models/User.js";
 
-const protect = asyncHandler(async (req, res, next) => {
+const protect = (req, res, next) => {
   let token;
-
+  let decoded;
 
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     try {
-      // Get token from header
-      token = req.headers.authorization.split(" ")[1];
+      // Extract token from header
+      token = req.headers.authorization.split(" ")[1]; // Extract token
+      console.log("Token received:", token); // Log the token for debugging
 
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, process.env.JWT_SECRET); 
+      console.log("Decoded payload:", decoded); // Log decoded payload
 
-      // Get user from the token
-      req.user = await User.findById(decoded.id).select("-password");
-
-      next();
+      req.user = decoded; // Attach decoded user to request
+      next(); // Proceed to next middleware/controller
     } catch (error) {
-      console.error(error);
-      res.status(401);
-      throw new Error("Not authorized, token failed");
+      console.error("Token verification failed:", error.message); // Log the error message
+      res.status(401).json({ message: "Not authorized, token failed" }); // Return a clear error response
     }
   }
 
   if (!token) {
-    res.status(401);
-    throw new Error("Not authorized, no token");
+    console.error("No token found in authorization header");
+    res.status(401).json({ message: "Not authorized, no token" }); // Clear error message for no token
   }
-});
+};
 
 export default protect;

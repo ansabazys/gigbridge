@@ -36,6 +36,7 @@ const Home = () => {
   const { user } = useContext(AuthContext);
   const { fname, lname, _id } = user;
 
+
   const getGigs = () => {
     axios
       .get("http://localhost:5000/api/gigs")
@@ -114,7 +115,7 @@ const Home = () => {
       //   return matchesSearch || matchesCategory || matchesLocation || matchesJobType;
       // });
 
-      console.log(jobTypeValue);
+  
 
       const filtered = gigs.filter((gig) => {
         console.log(gig);
@@ -203,7 +204,7 @@ const Home = () => {
               <div className="w-full h-full flex flex-col lg:basis-3/5">
                 <NotificationHeader />
                 <div className="w-full lg:basis-3/5 overflow-auto scrollbar-hide scroll-smooth flex-1">
-                  <NotificationPage />
+                  <NotificationPage userId={_id} gigs={filteredGigs}  />
                 </div>
               </div>
             )}

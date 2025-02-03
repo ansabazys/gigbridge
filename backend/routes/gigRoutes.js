@@ -1,14 +1,36 @@
 import express from "express";
-import { acceptApplication, addApplication, createGig, deleteGig, getGig, getGigs,  } from "../controllers/gigController.js";
+import {
+  createGig,
+  getGigs,
+  getGig,
+  applyGig,
+  acceptApplication,
+  deleteGig,
+} from "../controllers/gigController.js";
+import protect from "../middleware/authMiddleware.js";
+import multer from "multer";
+
+
+const upload = multer({dest: "uploads"})
 
 const router = express.Router();
 
-router.route("/").post(createGig).get(getGigs);
+// Create a new gig
+router.post("/", upload.single('image') , createGig)
 
-router.get("/:id", getGig)
-router.post("/:id/apply", addApplication);
-router.delete("/delete/:id", deleteGig)
-router.patch("/:gigId/application/:applicationId/accept", acceptApplication);
+// Get all gigs
+router.get("/", getGigs);
 
+// Get a gig by ID
+router.get("/:id", getGig);
+
+// Apply for a gig
+router.post("/:gigId/apply", applyGig);
+
+// Accept an application
+router.patch("/:gigId/applications/:applicationId/accept", acceptApplication);
+
+// Delete a gig
+router.delete("/delete/:id", deleteGig);
 
 export default router;

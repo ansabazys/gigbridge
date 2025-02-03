@@ -54,6 +54,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         lname: user.lname,
         email: user.email,
       });
+
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -84,6 +85,7 @@ export const loginUser = asyncHandler(async (req, res) => {
         fname: user.fname,
         lname: user.lname,
         email: user.email,
+        token
       });
   } else {
     res.status(401);

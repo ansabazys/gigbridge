@@ -1,108 +1,148 @@
 import expressAsyncHandler from "express-async-handler";
 import Gig from "../models/Gig.js";
+import Notification from "../models/Notification.js";
+import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 
+// Create a new gig
 export const createGig = async (req, res) => {
   try {
-    const gig = await Gig.create(req.body);
-    res.status(201).json(gig);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Add an application to a gig
-export const addApplication = expressAsyncHandler(async (req, res) => {
-  const { id } = req.params; // Extract gig ID from URL params
-  const { applicantId, applicantName, message } = req.body; // Get applicant details from the request body
-
-  if (!applicantId || !message) {
-    res.status(400);
-    throw new Error("Applicant ID and message are required.");
-  }
-
-  try {
-    // Find the gig by ID
-    const gig = await Gig.findById(id);
-
-    if (!gig) {
-      res.status(404);
-      throw new Error("Gig not found.");
+    // Check if a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: "Image is required" });
     }
 
-    // Update the applications array
-    gig.application.push({ applicantId, applicantName, message });
+    // Upload image to Cloudinary
+    cloudinary.uploader.upload(req.file.path, async (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          success: false,
+          message: "Error uploading image to Cloudinary",
+        });
+      }
 
-    // Save the updated gig
-    const updatedGig = await gig.save();
+      // Get the uploaded image URL from the result
+      const imageUrl = result.secure_url;
 
-    res.status(200).json({
-      message: "Application added successfully.",
-      gig: updatedGig,
-    });
-  } catch (error) {
-    res.status(500);
-    throw new Error(error.message);
-  }
-});
+      // Create a new gig with the image URL and other details
+      const newGig = new Gig({ ...req.body, image: imageUrl });
+      const savedGig = await newGig.save();
 
-export const acceptApplication = async (req, res) => {
-  const { gigId, applicationId } = req.params; // Extract gig and application IDs from the URL
+      // Get all users except the owner (req.body.user is the owner ID)
+      const users = await User.find({ _id: { $ne: req.body.user } }); // Exclude the gig owner
 
-  try {
-    const gig = await Gig.findById(gigId);
+      // Notify all users except the owner
+      users.forEach(async (user) => {
+        const notification = new Notification({
+          userId: user._id, // The user receiving the notification
+          message: `A new gig titled '${savedGig.title}' has been posted.`,
+          gigId: savedGig._id, // Link to the new gig
+        });
+        await notification.save();
+      });
 
-    if (!gig) {
-      return res.status(404).json({ message: "Gig not found" });
-    }
-
-    // Find the application to update
-    const application = gig.application.find(
-      (app) => app._id.toString() === applicationId
-    );
-
-    if (!application) {
-      return res.status(404).json({ message: "Application not found" });
-    }
-
-    // Update the application's status
-    application.status = "accepted"
-    gig.status = "in-progress";
-
-    await gig.save(); // Save changes to the database
-
-    res.status(200).json({
-      message: "Application accepted successfully",
-      gig,
+      // Respond with the created gig
+      res.status(201).json(savedGig);
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error updating application status" });
+    res.status(500).json({ message: error.message });
   }
 };
 
+// Apply for a gig
+export const applyGig = async (req, res) => {
+  try {
+    const { gigId } = req.params;
+    const { applicantId, applicantName, message } = req.body;
+
+    const gig = await Gig.findById(gigId);
+    if (!gig) return res.status(404).json({ message: "Gig not found." });
+
+    // Add application to gig
+    const application = { applicantId, applicantName, message };
+    gig.application.push(application);
+    const savedGig = await gig.save();
+
+    // Get the newly added application ID
+    const newApplication =
+      savedGig.application[savedGig.application.length - 1];
+    const applicationId = newApplication._id;
+
+    // Notify the gig owner
+    const notification = new Notification({
+      userId: gig.user,
+      message: `${applicantName} applied for your gig: '${gig.title}'`,
+      gigId,
+      applicationId, // Include applicationId in the notification
+    });
+
+    await notification.save();
+
+    res.status(200).json({
+      message: "Application submitted successfully.",
+      gig: savedGig,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Accept application
+export const acceptApplication = async (req, res) => {
+  try {
+    const { gigId, applicationId } = req.params;
+
+    const gig = await Gig.findById(gigId);
+    if (!gig) return res.status(404).json({ message: "Gig not found." });
+
+    const application = gig.application.id(applicationId);
+    if (!application)
+      return res.status(404).json({ message: "Application not found." });
+
+    application.status = "accepted";
+    gig.status = "in-progress";
+    await gig.save();
+
+    // Notify the applicant
+    const notification = new Notification({
+      userId: application.applicantId,
+      message: `Your application for '${gig.title}' has been accepted!`,
+      gigId,
+    });
+    await notification.save();
+
+    res.status(200).json({ message: "Application accepted.", gig });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const deleteGig = expressAsyncHandler(async (req, res) => {
   const gigId = req.params.id;
-  console.log(gigId);
 
-  // Find the gig by ID
-  const gig = await Gig.findById(gigId);
+  try {
+    // Find the gig by ID
+    const gig = await Gig.findById(gigId);
 
-  if (!gig) {
-    res.status(404);
-    throw new Error("Gig not found");
+    if (!gig) {
+      res.status(404);
+      throw new Error("Gig not found");
+    }
+
+    // Delete notifications related to the gig
+    await Notification.deleteMany({ gigId });
+
+    // Delete the gig
+    await gig.deleteOne();
+
+    res
+      .status(200)
+      .json({ message: "Gig and related notifications deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  // Verify that the logged-in user owns the gig
-  // if (gig.user.toString() !== req.user.id) {
-  //   res.status(403);
-  //   throw new Error("You are not authorized to delete this gig");
-  // }
-
-  // Delete the gig
-  await gig.deleteOne();
-
-  res.status(200).json({ message: "Gig deleted successfully" });
 });
 
 export const getGig = async (req, res) => {

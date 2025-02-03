@@ -54,6 +54,8 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
     fetchUserProfile(); // Fetch user profile by ID
   }, [gig.user]);
 
+  console.log(gig)
+
   return (
     <div className="w-full  scrollbar-hide scroll-smooth px-5 py-4 ">
       <div className="flex flex-col justify-center w-full  items-center divide-y ">
@@ -99,7 +101,7 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
             {/* Image */}
 
             <img
-              src={img}
+              src={gig.image}
               alt={gig.title}
               className="w-full h-64 object-cover rounded-2xl"
             />
@@ -155,6 +157,7 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
                     Apply
                   </Link>
                 )}
+               
 
                 <button className="flex items-center gap-1">
                   <GoArrowUpRight size={20} />

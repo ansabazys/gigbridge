@@ -7,6 +7,7 @@ const Apply = () => {
   const { id } = useParams(); // Get the gig ID from the URL params
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const [msg, setMsg] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -32,7 +33,6 @@ const Apply = () => {
   useEffect(() => {
     getGig();
   }, []);
-
 
   //   // Handle form submission
   //   const handleSubmit = async (e) => {
@@ -74,7 +74,6 @@ const Apply = () => {
   //     }
   //   };
 
-
   const handleApply = async (e) => {
     e.preventDefault();
     try {
@@ -84,17 +83,12 @@ const Apply = () => {
         {
           applicantId: user._id,
           applicantName: `${user.fname} ${user.lname}`,
-          message: "I'm excited to work on this gig!",
+          message: msg,
         }
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // }
       );
 
       console.log("Application successful:", response.data);
-      navigate("/home")
+      navigate("/home");
     } catch (error) {
       console.error(
         "Error applying to gig:",
@@ -105,12 +99,8 @@ const Apply = () => {
     }
   };
 
-  console.log()
-
   return (
-    
     <div className="max-w-md mx-auto mt-10 p-5 border rounded-md shadow-lg bg-white">
-      
       <h2 className="text-2xl font-bold mb-5">{gig.title}</h2>
       <p>{gig.description}</p>
       <form onSubmit={handleApply}>
@@ -124,8 +114,8 @@ const Apply = () => {
           <textarea
             id="coverLetter"
             name="coverLetter"
-            value={formData.coverLetter}
-            onChange={handleChange}
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             placeholder="Write a brief cover letter explaining why you're a good fit for this gig"
             rows="5"

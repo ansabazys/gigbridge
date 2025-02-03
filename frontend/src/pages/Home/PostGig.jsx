@@ -4,11 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 const PostGig = () => {
+  const [error, setError] = useState(null);
+  const { user } = useContext(AuthContext);
 
-  const [error, setError] = useState(null)
-  const {user} = useContext(AuthContext)
-
-  
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -20,7 +18,11 @@ const PostGig = () => {
     deadline: "",
   });
 
+  const [image, setImage] = useState(null);
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]); // Store the selected file
+  };
 
   const categories = ["Design", "Development", "Marketing", "Writing", "Other"];
 
@@ -29,26 +31,49 @@ const PostGig = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formDataWithImage = new FormData();
+    formDataWithImage.append("title", formData.title);
+    formDataWithImage.append("description", formData.description);
+    formDataWithImage.append("category", formData.category);
+    formDataWithImage.append("jobType", formData.jobType);
+    formDataWithImage.append("location", formData.location);
+    formDataWithImage.append("budget", formData.budget);
+    formDataWithImage.append("deadline", formData.deadline);
+    formDataWithImage.append("user", user._id);
+
+    if (image) {
+      formDataWithImage.append("image", image); // Attach the image file
+    }
+
+    console.log(...formDataWithImage)
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/gigs",
-        formData,
+        formDataWithImage,
         {
-          withCredentials: true, // Include credentials for authentication
+          headers: {
+            "Content-Type": "multipart/form-data", // Required for file uploads
+          },
+          withCredentials: true,
         }
       );
 
-      navigate("/home"); // Redirect to home or gig feed after posting
+      console.log(response.data)
+      navigate("/home"); // Redirect after posting the gig
     } catch (err) {
-      console.error("Error posting gig:", err.response?.data?.message || err.message);
+      console.error(
+        "Error posting gig:",
+        err.response?.data?.message || err.message
+      );
       setError(err.response?.data?.message || "Failed to post gig");
     }
   };
-
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -85,6 +110,21 @@ const PostGig = () => {
             className="w-full border rounded-lg p-2 h-24"
             required
           ></textarea>
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label htmlFor="image" className="block font-medium mb-1">
+            Upload Image
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full border rounded-lg p-2"
+          />
         </div>
 
         {/* Category */}

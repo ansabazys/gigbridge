@@ -4,6 +4,7 @@ const gigSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
+    image: String, // Array of image URLs
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     budget: { type: Number, required: true },
     deadline: { type: Date, required: true },

@@ -1,130 +1,136 @@
-import React, { useContext, useEffect, useState } from "react";
-import { IoNotificationsOutline } from "react-icons/io5";
+import React, { useEffect, useState } from "react";
 import avatar from "../../assets/avatar.png";
-import { GoDot, GoDotFill } from "react-icons/go";
+import { GoDotFill } from "react-icons/go";
 import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
-import Accept from "../../components/Accept";
+import { Link } from "react-router-dom";
 
-const notifications = [
-  {
-    id: 1,
-    message:
-      "Your application for 'Logo Design for Startup' has been accepted!",
-    time: "2 hours ago",
-    isRead: false,
-  },
-  {
-    id: 2,
-    message: "John Doe completed the gig: 'Build a Responsive Website'.",
-    time: "1 day ago",
-    isRead: true,
-  },
-  {
-    id: 3,
-    message: "New gig posted: 'Social Media Marketing'. Check it out now!",
-    time: "3 days ago",
-    isRead: false,
-  },
-];
+const NotificationPage = ({ userId, gigs }) => {
+  const [notifications, setNotifications] = useState([]);
 
-const NotificationPage = () => {
-  const [gigs, setGigs] = useState([]);
-  const [userGigs, setUserGigs] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const { user } = useContext(AuthContext);
-  const { _id } = user;
-
-  const getGigs = () => {
-    axios
-      .get("http://localhost:5000/api/gigs")
-      .then((response) => {
-        setGigs(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  // Fetch notifications for the user
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/notification/${userId}`
+      );
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
   };
 
   useEffect(() => {
-    getGigs();
-  }, [loading]);
+    fetchNotifications();
+  }, []);
+
+  const checkIfApplied = (gigId) => {
+    const gig = gigs.find((g) => g._id === gigId);
+    return gig?.application.some((app) => app.applicantId === userId);
+  };
+
+  const checkApplicationStatus = (gigId, applicationId) => {
+    const gig = gigs.find((g) => g._id === gigId);
+    const application = gig?.application.find(
+      (app) => app._id === applicationId
+    );
+    return application?.status || null;
+  };
 
   const handleAccept = async (gigId, applicationId) => {
     try {
-      setLoading(true);
       const response = await axios.patch(
-        `http://localhost:5000/api/gigs/${gigId}/application/${applicationId}/accept`,
-        {}
+        `http://localhost:5000/api/gigs/${gigId}/applications/${applicationId}/accept`
       );
-
-      console.log("Application successful:", response.data);
+      console.log(response);
     } catch (error) {
-      console.error(
-        "Error applying to gig:",
-        error.response?.data || error.message
-      );
-    } finally {
-      setLoading(false);
+      console.log(error);
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto px-4">
-      <div className="flex items-center justify-between"></div>
+      <ul>
+        {notifications.map((item) => {
+          const isApplied = checkIfApplied(item.gigId);
+          const isAccepted = checkApplicationStatus(
+            item.gigId,
+            item.applicationId
+          );
+          console.log(user)
+          return (
+            <li
+              key={item._id}
+              className="flex justify-between items-center gap-3 border-b py-6"
+            >
+              {/* Notification details */}
+              <header>
+                <img src={avatar} alt="" className="w-12 h-12" />
+              </header>
+              <div className="flex-1">
+                <p className="text-gray-800">{item.message}</p>
+              </div>
 
-      <ul className="">
-        {gigs
-          .filter((item) => item.user === _id) //Filter gigs owned by the logged-in user
-          .map((gig) => {
-            console.log(gig);
-            return gig.application.map((application) => {
-              console.log(application);
-              return (
-                <div>
-                  <Accept
-                    gig={gig}
-                    application={application}
-                    handleAccept={handleAccept}
-                  />
-                 
-                </div> 
-              );
-            });
+              {/* Dynamic action buttons */}
+              {item.message.includes("A new gig") && !isApplied && (
+                <Link
+                  className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                  to={`/home/apply/${item.gigId}`}
+                >
+                  Apply
+                </Link>
+              )}
+              {item.message.includes("A new gig") && isApplied && (
+                <Link
+                  className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                  to={`/home/apply/${item.gigId}`}
+                >
+                  Applied
+                </Link>
+              )}
 
-            console.log(y);
+              {item.message.includes("applied") ? (
+                isAccepted === "accepted" ? (
+                  <>
+                  <button
+                    className="py-[.3rem] px-[.6875rem] border rounded-md bg-green-200 text-green-800"
+                  >
+                    Accepted
+                  </button>
+                  <Link
+                        className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                        to={`/home/messages/${item.userId}`}
+                  >
+                    Message
+                  </Link>
+                  </>
+                ) : (
+                  <button
+                    className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                    onClick={() => handleAccept(item.gigId, item.applicationId)}
+                  >
+                    Accept
+                  </button>
+                )
+              ) : null}
 
-            // if(notification.application) {
-            //   return (
-            //
-            //   )
-            // }
+              {item.message.includes("accepted") && (
+                <Link
+                  className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
+                  to={`/home/start/${item.gigId}`}
+                >
+                  Message
+                </Link>
+              )}
 
-          //   <li
-          //   key={application._id}
-          //   className={`flex justify-between items-center gap-3 border-b py-6`}
-          // >
-          //   <header>
-          //     <img src={avatar} alt="" className="w-12 h-12" />
-          //   </header>
-          //   <div className="flex-1">
-          //     <p className=" text-gray-800">{`${application.applicantName} Applied for your gig "${gig.title}"`}</p>
-          //     {/* <span className="text-xs text-gray-500">{notification.time}</span> */}
-          //   </div>
-          //   <button className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200">
-          //     View
-          //   </button>
-
-          //   {!gig.isRead && (
-          //     <div className="mt-1">
-          //       <GoDotFill color="red" />
-          //     </div>
-          //   )}
-          // </li>
-          })}
-
-          
+              {/* Unread notification indicator */}
+              {!item.isRead && (
+                <div className="mt-1">
+                  <GoDotFill color="red" />
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
