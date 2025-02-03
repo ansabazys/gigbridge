@@ -73,6 +73,7 @@ export const applyGig = async (req, res) => {
     // Notify the gig owner
     const notification = new Notification({
       userId: gig.user,
+      applicantId,
       message: `${applicantName} applied for your gig: '${gig.title}'`,
       gigId,
       applicationId, // Include applicationId in the notification
@@ -93,6 +94,7 @@ export const applyGig = async (req, res) => {
 export const acceptApplication = async (req, res) => {
   try {
     const { gigId, applicationId } = req.params;
+    console.log()
 
     const gig = await Gig.findById(gigId);
     if (!gig) return res.status(404).json({ message: "Gig not found." });

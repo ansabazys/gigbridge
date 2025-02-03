@@ -34,6 +34,14 @@ const App = () => {
           }
         />
         <Route
+          path="/home/messages/:user1/:user2"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/home/gig-details"
           element={
             <PrivateRoute>

@@ -56,7 +56,7 @@ const NotificationPage = ({ userId, gigs }) => {
             item.gigId,
             item.applicationId
           );
-          console.log(user)
+          console.log(item)
           return (
             <li
               key={item._id}
@@ -98,7 +98,7 @@ const NotificationPage = ({ userId, gigs }) => {
                   </button>
                   <Link
                         className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
-                        to={`/home/messages/${item.userId}`}
+                        to={`/home/messages/${item.applicantId}/${item.userId}`}
                   >
                     Message
                   </Link>
@@ -116,7 +116,7 @@ const NotificationPage = ({ userId, gigs }) => {
               {item.message.includes("accepted") && (
                 <Link
                   className="py-[.3rem] px-[.6875rem] border rounded-md hover:bg-gray-200"
-                  to={`/home/start/${item.gigId}`}
+                  to={`/home/messages/${item.applicantId}/${item.userId}`}
                 >
                   Message
                 </Link>

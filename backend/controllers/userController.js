@@ -20,6 +20,15 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 // @desc    Get user profile
 // @route   GET /api/users/profile/:id
 // @access  Private

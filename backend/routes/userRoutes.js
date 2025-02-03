@@ -1,5 +1,5 @@
 import express from "express";
-import { getUserProfile, updateUserProfile, deleteUser, getGigUserProfile } from "../controllers/userController.js";
+import { getUserProfile, updateUserProfile, deleteUser, getGigUserProfile, getUsers } from "../controllers/userController.js";
 import  protect  from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -9,6 +9,7 @@ const router = express.Router();
 // @access  Private
 router.get("/profile", protect, getUserProfile);
 router.get("/profile/:id", getGigUserProfile);
+router.get("/", getUsers);
 
 // @route   PUT /api/users/profile
 // @desc    Update user profile

@@ -190,9 +190,9 @@ const Home = () => {
               </div>
             )}
 
-            {pathname === "/home/messages" && (
+            {pathname.includes("messages") && (
               <div className="w-full lg:basis-3/5">
-                <MessagingInterface />
+                <MessagingInterface userId={_id}/>
               </div>
             )}
             {pathname === "/home/post-gigs" && (

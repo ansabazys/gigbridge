@@ -6,14 +6,21 @@ const router = express.Router();
 // Send a message
 router.post("/", async (req, res) => {
   try {
+    console.log("Request Body:", req.body);  // Log the incoming data
     const { senderId, receiverId, message, gigId } = req.body;
+    
+    // Create new message
     const newMessage = new Message({ senderId, receiverId, message, gigId });
-    await newMessage.save();
-    res.status(201).json(newMessage);
+    const savedMessage = await newMessage.save();
+    console.log("Saved Message:", savedMessage);
+    
+    res.status(201).json(savedMessage);  // Respond with the saved message
   } catch (error) {
+    console.error("Error saving message:", error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Get messages between two users
 router.get("/:user1/:user2", async (req, res) => {
