@@ -7,11 +7,35 @@ import Countdown from "../../components/CountDown";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { GoTrash } from "react-icons/go";
+import { GoReport } from "react-icons/go";
 
 const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState([]);
   const { fname, lname, _id } = user;
+  const [reportReason, setReportReason] = useState("");
+
+  const handleReport = async () => {
+    // Show prompt for reason
+    const reportReason = prompt("Enter the reason for reporting this gig:");
+
+    if (!reportReason) {
+      alert("Report reason is required!");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:5000/api/reports/report", {
+        gigId: gig._id,
+        reportedBy: user._id, // Pass the actual user ID
+        reason: reportReason,
+      });
+      alert("Gig reported successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Error reporting gig!");
+    }
+  };
 
 
   function timeAgo(isoString) {
@@ -54,7 +78,7 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
     fetchUserProfile(); // Fetch user profile by ID
   }, [gig.user]);
 
-  console.log(gig)
+  console.log(gig);
 
   return (
     <div className="w-full  scrollbar-hide scroll-smooth px-5 py-4 ">
@@ -86,7 +110,7 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
                 <p className="text-sm text-gray-500">{gig.location}</p>
               </div>
             </div>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer flex justify-center items-center gap-3">
               {isGigUser ? (
                 <button
                   className="border px-2 py-1 rounded-md"
@@ -95,6 +119,12 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
                   <GoTrash />
                 </button>
               ) : null}
+              <button
+                onClick={handleReport}
+                className="flex items-center gap-2 text-red-500"
+              >
+                <GoReport size={20} /> Report
+              </button>
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -157,7 +187,6 @@ const GigFeed = ({ gig, handleDelete, isGigUser, isApplied }) => {
                     Apply
                   </Link>
                 )}
-               
 
                 <button className="flex items-center gap-1">
                   <GoArrowUpRight size={20} />

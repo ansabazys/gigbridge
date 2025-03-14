@@ -3,12 +3,12 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"; // Assuming the context is in this path
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useContext(AuthContext); // Check if user is authenticated
+  const {  admin } = useContext(AuthContext); // Check if user is authenticated
 
+  console.log(admin)
 
-
-  if (!user) {
-    return <Navigate to="/login" />; // Redirect to login if user is not authenticated
+  if(!admin) {
+    return <Navigate to="/adminlogin" />
   }
 
   return children; // Return the protected route if user is authenticated

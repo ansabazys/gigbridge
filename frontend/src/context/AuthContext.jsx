@@ -9,13 +9,14 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user"))); // User state
   const [loading, setLoading] = useState(true); // Loading state
+  const [admin, setAdmin] = useState(JSON.parse(localStorage.getItem("admin")))
   const navigate = useNavigate();
 
   // Check user authentication when the app loads (to handle refresh)
   useEffect(() => {
     // Fetch user from localStorage
     const storedUser = localStorage.getItem("user");
-   
+  
 
     if (storedUser) {
       // If user is in localStorage, parse and set it
@@ -87,6 +88,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const Adminlogin = async (username, password) => {
+
+    console.log(username, password)
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/admin/login",
+        {username: username, password: password},
+        {
+          withCredentials: true, // Ensure cookies are included in the request
+        }
+      );
+      console.log(response)
+      localStorage.setItem("admin", JSON.stringify(response.data.token))
+      setAdmin(true)
+      navigate("/admin"); // Redirect to home page after login
+    } catch (error) {
+      console.error("Login failed:", error.response?.data?.message);
+    }
+  };
+
+ 
+
   // Logout function
   const logout = async () => {
     try {
@@ -106,7 +129,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, admin,  register, login, logout, Adminlogin }}>
       {children}
     </AuthContext.Provider>
   );

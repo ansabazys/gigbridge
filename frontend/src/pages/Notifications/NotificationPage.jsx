@@ -47,10 +47,13 @@ const NotificationPage = ({ userId, gigs }) => {
     }
   };
 
+  console.log(userId)
+
   return (
     <div className="max-w-2xl mx-auto px-4">
       <ul>
         {notifications.map((item) => {
+          console.log(item)
           const isApplied = checkIfApplied(item.gigId);
           const isAccepted = checkApplicationStatus(
             item.gigId,

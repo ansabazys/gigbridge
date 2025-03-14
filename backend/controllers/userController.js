@@ -22,10 +22,17 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
+<<<<<<< HEAD
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
     res.status(400).json({ message: error.message });
+=======
+    const users = await User.find()
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+>>>>>>> b9f8048 (project completed)
   }
 };
 
@@ -53,7 +60,8 @@ export const getGigUserProfile = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/profile
 // @access  Private
 export const updateUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.body.id);
+  console.log(user)
 
   if (user) {
     user.fname = req.body.fname || user.fname;
@@ -62,6 +70,8 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.password = req.body.password || user.password;
 
     const updatedUser = await user.save();
+
+    console.log(updatedUser)
 
     res.json({
       _id: updatedUser._id,

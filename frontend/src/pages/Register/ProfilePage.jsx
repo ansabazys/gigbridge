@@ -1,22 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
+import { AuthContext } from "../../context/AuthContext";
 
-const transactions = [
-  {
-    id: 1,
-    gigTitle: "Logo Design for Startup",
-    date: "2024-12-10",
-    amount: "$150",
-    status: "Completed",
-  },
-  {
-    id: 2,
-    gigTitle: "Build a Responsive Website",
-    date: "2024-12-08",
-    amount: "$500",
-    status: "Pending",
-  },
-];
 
 const myGigs = [
   {
@@ -35,19 +20,42 @@ const myGigs = [
   },
 ];
 
+
+
 const ProfilePage = () => {
   const [editing, setEditing] = useState(false);
+  const {user} = useContext(AuthContext)
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    location: "New York, USA",
+    id: user._id,
+    fname: user.fname,
+    lname: user.lname,
+    email: user.email,
+
   });
+
+  console.log(user)
 
   const handleEdit = () => setEditing(!editing);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
+  };
+  
+  const updateUser = async (values) => {
+    try {
+      const response = await axios.put(
+        "http://localhost:5000/api/user/profile",
+        profile,{
+          withCredentials: true, // Ensure cookies are included in the request
+        }
+      );
+
+      console.log(response)
+  
+    } catch (error) {
+      console.error("update failed:", error.response?.data?.message);
+    }
   };
 
   const handleSave = () => setEditing(false);
@@ -66,8 +74,15 @@ const ProfilePage = () => {
           <div className="space-y-4">
             <input
               type="text"
-              name="name"
-              value={profile.name}
+              name="fname"
+              value={profile.fname}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg"
+            />
+            <input
+              type="text"
+              name="lname"
+              value={profile.lname}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg"
             />
@@ -86,7 +101,7 @@ const ProfilePage = () => {
               className="w-full border p-2 rounded-lg"
             />
             <button
-              onClick={handleSave}
+              onClick={updateUser}
               className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
             >
               Save
@@ -94,9 +109,9 @@ const ProfilePage = () => {
           </div>
         ) : (
           <div>
-            <p><strong>Name:</strong> {profile.name}</p>
+            <p><strong>First Name:</strong> {profile.fname}</p>
+            <p><strong>Last Name:</strong> {profile.lname}</p>
             <p><strong>Email:</strong> {profile.email}</p>
-            <p><strong>Location:</strong> {profile.location}</p>
             <button
               onClick={handleEdit}
               className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
@@ -107,24 +122,7 @@ const ProfilePage = () => {
         )}
       </div>
 
-      {/* Transactions */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 className="text-lg font-medium mb-4">Transactions</h2>
-        <ul className="space-y-4">
-          {transactions.map((transaction) => (
-            <li key={transaction.id} className="flex justify-between items-center border p-4 rounded-lg">
-              <div>
-                <p className="font-medium">{transaction.gigTitle}</p>
-                <p className="text-sm text-gray-500">{transaction.date}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-medium text-green-500">{transaction.amount}</p>
-                <p className={`text-sm ${transaction.status === "Completed" ? "text-green-500" : "text-yellow-500"}`}>{transaction.status}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      
 
       {/* My Gigs */}
       <div className="bg-white p-4 rounded-lg shadow-md">

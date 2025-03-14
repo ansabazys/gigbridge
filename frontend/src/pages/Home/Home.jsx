@@ -11,7 +11,7 @@ import MessagingInterface from "../Messages/MessagingInterface";
 import Header from "../../components/Header";
 import PostGig from "./PostGig";
 import NotificationPage from "../Notifications/NotificationPage";
-import ProfilePage from "../Profile/ProfilePage";
+import ProfilePage from "../Register/ProfilePage";
 import AccountSettingsPage from "./AccountSettingsPage";
 import NotificationHeader from "../../components/NotificationHeader";
 import axios from "axios";
@@ -150,12 +150,12 @@ const Home = () => {
       <div className="md:h-[93svh]  md:container w-full">
         <main className="flex  justify-center h-full md:h-full">
           <div className="w-full flex md:flex-row md:h-full flex-col-reverse border">
-            <div className="hidden md:block lg:basis-1/5 border-r">
+            <div className="hidden md:block lg:basis-1/4 border-r">
               <Sidebar />
             </div>
 
             {pathname === "/home" && (
-              <div className="w-full flex flex-col lg:basis-3/5">
+              <div className="w-full flex flex-col lg:basis-3/4">
                 <div className="hidden md:block">
                   <SearchBar
                     searchValue={(value) => handleFilter("search", value)}
@@ -190,7 +190,11 @@ const Home = () => {
               </div>
             )}
 
+<<<<<<< HEAD
             {pathname.includes("messages") && (
+=======
+            {pathname.includes("/home/messages") && (
+>>>>>>> b9f8048 (project completed)
               <div className="w-full lg:basis-3/5">
                 <MessagingInterface userId={_id}/>
               </div>
@@ -237,7 +241,7 @@ const Home = () => {
               </div>
             )}
 
-            <div className="lg:basis-1/5 hidden lg:block border-l"></div>
+          
             <div className="md:hidden">
               <BottomNavbar />
             </div>

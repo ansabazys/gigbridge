@@ -1,22 +1,36 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";  // Use the hook to get params
+=======
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+>>>>>>> b9f8048 (project completed)
 import { io } from "socket.io-client";
 import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5000"); // Connect to Socket.io server
 
-const MessengeInterface = ({ userId }) => {
+const MessengeInterface = () => {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newMessage, setNewMessage] = useState("");
 
+<<<<<<< HEAD
   // Extract user1 and user2 from the URL params
   const { user1, user2 } = useParams();
+=======
+  const { user1, user2 } = useParams();
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const { _id } = user;
+>>>>>>> b9f8048 (project completed)
 
   useEffect(() => {
     fetchUsers();
     if (user1 && user2) {
+<<<<<<< HEAD
       fetchMessages(user1, user2); // Fetch messages between user1 and user2
     }
 
@@ -31,6 +45,23 @@ const MessengeInterface = ({ userId }) => {
 
     return () => {
       socket.off("message"); // Clean up on unmount
+=======
+      fetchMessages(user1, user2);
+    }
+
+    // **Listen for new messages in real-time & prevent duplicates**
+    socket.on("newMessage", (message) => {
+      setMessages((prevMessages) => {
+        if (!prevMessages.some((msg) => msg._id === message._id)) {
+          return [...prevMessages, message];
+        }
+        return prevMessages;
+      });
+    });
+
+    return () => {
+      socket.off("newMessage"); // Cleanup listener
+>>>>>>> b9f8048 (project completed)
     };
   }, [user1, user2]);
 
@@ -55,20 +86,31 @@ const MessengeInterface = ({ userId }) => {
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
+<<<<<<< HEAD
     
     const messageData = {
       senderId: userId,
+=======
+
+    const messageData = {
+      senderId: _id, // Current user
+>>>>>>> b9f8048 (project completed)
       receiverId: selectedUser._id,
       message: newMessage,
     };
 
     try {
+<<<<<<< HEAD
       const response = await axios.post("http://localhost:5000/api/messages", messageData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
       setMessages([...messages, response.data]); // Update message state on success
+=======
+      const response = await axios.post("http://localhost:5000/api/messages", messageData);
+      socket.emit("sendMessage", response.data); // **Send message via Socket.io**
+>>>>>>> b9f8048 (project completed)
       setNewMessage(""); // Clear input field
     } catch (error) {
       console.error("Error sending message", error);
@@ -83,7 +125,11 @@ const MessengeInterface = ({ userId }) => {
         {users.map((user) => (
           <button
             key={user._id}
+<<<<<<< HEAD
             onClick={() => fetchMessages(user._id, userId)}
+=======
+            onClick={() => navigate(`/home/messages/${user._id}/${_id}`)}
+>>>>>>> b9f8048 (project completed)
             className="block w-full p-2 border-b text-left"
           >
             {user.fname}
@@ -100,10 +146,17 @@ const MessengeInterface = ({ userId }) => {
               {messages.map((msg, index) => (
                 <div
                   key={index}
+<<<<<<< HEAD
                   className={`mb-2 p-2 rounded-md w-fit ${
                     msg.senderId === userId
                       ? "bg-blue-500 text-white ml-auto"
                       : "bg-gray-300 text-black"
+=======
+                  className={`mb-2 p-2 rounded-lg max-w-xs break-words ${
+                    msg.senderId === _id
+                      ? "bg-blue-500 text-white ml-auto text-right"
+                      : "bg-gray-300 text-black mr-auto text-left"
+>>>>>>> b9f8048 (project completed)
                   }`}
                 >
                   {msg.message}
@@ -119,10 +172,14 @@ const MessengeInterface = ({ userId }) => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
               />
+<<<<<<< HEAD
               <button
                 className="ml-2 p-2 bg-blue-500 text-white"
                 onClick={sendMessage}
               >
+=======
+              <button className="ml-2 p-2 bg-blue-500 text-white" onClick={sendMessage}>
+>>>>>>> b9f8048 (project completed)
                 Send
               </button>
             </div>

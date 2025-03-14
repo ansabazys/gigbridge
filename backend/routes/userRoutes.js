@@ -8,13 +8,14 @@ const router = express.Router();
 // @desc    Get user profile
 // @access  Private
 router.get("/profile", protect, getUserProfile);
+router.get("/", getUsers);
 router.get("/profile/:id", getGigUserProfile);
 router.get("/", getUsers);
 
 // @route   PUT /api/users/profile
 // @desc    Update user profile
 // @access  Private
-router.put("/profile", protect, updateUserProfile);
+router.put("/profile", updateUserProfile);
 
 // @route   DELETE /api/users/profile
 // @desc    Delete user account
