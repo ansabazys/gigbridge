@@ -22,17 +22,10 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-<<<<<<< HEAD
-    const users = await User.find();
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-=======
     const users = await User.find()
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
->>>>>>> b9f8048 (project completed)
   }
 };
 

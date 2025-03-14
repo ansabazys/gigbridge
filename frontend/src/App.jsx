@@ -39,7 +39,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-<<<<<<< HEAD
         <Route
           path="/home/messages/:user1/:user2"
           element={
@@ -49,16 +48,13 @@ const App = () => {
           }
         />
         <Route
-=======
-        {/* <Route
->>>>>>> b9f8048 (project completed)
           path="/home/gig-details"
           element={
             <PrivateRoute>
               <Home />
             </PrivateRoute>
           }
-        /> */}
+        /> 
         <Route
           path="/home/post-gigs"
           element={

@@ -189,12 +189,8 @@ const Home = () => {
                 </div>
               </div>
             )}
-
-<<<<<<< HEAD
-            {pathname.includes("messages") && (
-=======
+``
             {pathname.includes("/home/messages") && (
->>>>>>> b9f8048 (project completed)
               <div className="w-full lg:basis-3/5">
                 <MessagingInterface userId={_id}/>
               </div>

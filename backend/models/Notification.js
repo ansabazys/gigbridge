@@ -10,13 +10,8 @@ const notificationSchema = new mongoose.Schema(
     applicantId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-<<<<<<< HEAD
-    },
-
-=======
       required: true,
     },
->>>>>>> b9f8048 (project completed)
     message: { type: String, required: true },
     gigId: { type: mongoose.Schema.Types.ObjectId, ref: "Gig" },
     applicationId: {
